@@ -16,10 +16,14 @@ import com.example.timetable.*
 import com.example.timetable.structure.Day
 import com.example.timetable.structure.TimeTableStructure
 import com.example.timetable.ui.theme.TimeTableTheme
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import java.util.*
 
+@InternalCoroutinesApi
+@ExperimentalPagerApi
 @Composable
 fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
     var systemController = rememberSystemUiController()
@@ -36,7 +40,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
     }
 
     Box {
-        TimeTableView(date, timeTableStructure, selectedDay.value)
+        TimeTableView(date, timeTableStructure, selectedDay)
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -61,6 +65,8 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
 }
 
 
+@InternalCoroutinesApi
+@ExperimentalPagerApi
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview2() {

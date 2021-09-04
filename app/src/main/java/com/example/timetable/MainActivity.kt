@@ -19,10 +19,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.timetable.components.MainMenu
 import com.example.timetable.ui.theme.TimeTableTheme
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import java.util.*
 
+@ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
     var date = mutableStateOf(Date())
     var selectedDay = mutableStateOf(date.value.weekDayNum() - 1)

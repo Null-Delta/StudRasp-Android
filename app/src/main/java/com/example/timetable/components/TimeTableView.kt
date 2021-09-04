@@ -1,6 +1,7 @@
 package com.example.timetable.components
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
@@ -8,6 +9,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +27,12 @@ import com.example.timetable.structure.Day
 import com.example.timetable.structure.Lesson
 import com.example.timetable.structure.TimeTableStructure
 import com.example.timetable.weekDayNum
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import java.util.*
 
 
@@ -56,13 +66,37 @@ val timeTableStructure = TimeTableStructure("26/2", "Чс", "Зн",
                 Lesson("Дискретка", "Жук А.С.", "А305","Лк", 530, 620),
             )
         ),
-        Day()
+        Day(
+            listOf(
+                Lesson("Дискретка", "Жук А.С.", "А305","Лк", 10, 90)
+                ),
+            listOf(
+                Lesson("Дискретка", "Жук А.С.", "А305","Лк", 10, 90)
+            )
+        )
     )
 )
 
+@InternalCoroutinesApi
+@ExperimentalPagerApi
 @Composable
-fun TimeTableView(date: Date, timeTable: TimeTableStructure, selectedDay: Int) {
+fun TimeTableView(date: Date, timeTable: TimeTableStructure, selectedDay: MutableState<Int>) {
     val context = LocalContext.current
+
+    val pagerState = rememberPagerState(
+        pageCount = 7,
+        selectedDay.value,0f,1,false
+    )
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect {
+            selectedDay.value = it
+        }
+    }
+
+    LaunchedEffect(key1 = selectedDay.value) {
+        pagerState.animateScrollToPage(selectedDay.value)
+    }
 
     Column(
         modifier = Modifier
@@ -103,108 +137,113 @@ fun TimeTableView(date: Date, timeTable: TimeTableStructure, selectedDay: Int) {
             }
         }
 
-        Column(
-            modifier = Modifier
-                .verticalScroll(ScrollState(0), true, null, false)
-                .padding(0.dp, 0.dp, 0.dp, 114.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(0.dp,0.dp,0.dp,8.dp)
+        HorizontalPager(
+            state = pagerState,
+            verticalAlignment = Alignment.Top,
+        ) { page ->
+            Column(
+                modifier = Modifier
+                    .verticalScroll(ScrollState(0), true, null, false)
+                    .padding(0.dp, 0.dp, 0.dp, 114.dp)
             ) {
-                Text(
-                    text = "Текущая неделя",
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.primary
-                )
-                Spacer(modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .weight(1f, true))
+                Row(
+                    modifier = Modifier.padding(0.dp,0.dp,0.dp,8.dp)
+                ) {
+                    Text(
+                        text = "Текущая неделя",
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primary
+                    )
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .weight(1f, true))
 
-                Text(
-                    text = timeTable.getWeekName(date, 0),
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.primary
-                )
-            }
-
-            if(timeTable.days[selectedDay].getLessons(Date(), 0).isEmpty()) {
-                Text(
-                    text ="Сегодня пар нет",
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth(),
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.onSecondary,
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            repeat(timeTable.days[selectedDay].getLessons(Date(),0).size) {
-                Card(date = date, lesson = timeTable.days[selectedDay].getLessons(Date(),0)[it],
-                    state =
-                        if(date.weekDayNum() - 1 != selectedDay)
-                            CardState.disable
-                        else if(date.minutes() > timeTable.days[selectedDay].getLessons(Date(),0)[it].end)
-                            CardState.disable
-                        else if(date.minutes() >= timeTable.days[selectedDay].getLessons(Date(),0)[it].start &&
-                            date.minutes() <= timeTable.days[selectedDay].getLessons(Date(),0)[it].end)
-                              CardState.active
-                        else if(date.minutes() < timeTable.days[selectedDay].getLessons(Date(),0)[it].start &&
-                            (it ==  0 || date.minutes() > timeTable.days[selectedDay].getLessons(Date(),0)[it - 1].end))
-                                CardState.wait else CardState.highlight
-                )
-                if(it != 15) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = timeTable.getWeekName(date, 0),
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primary
+                    )
                 }
-            }
 
-            Row(
-                modifier = Modifier.padding(0.dp,16.dp,0.dp,8.dp)
-            ) {
-                Text(
-                    text = "Следующая неделя",
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.primary
-                )
-                Spacer(modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .weight(1f, true))
+                if(timeTable.days[page].getLessons(Date(), 0).isEmpty()) {
+                    Text(
+                        text ="Сегодня пар нет",
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .fillMaxWidth(),
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.onSecondary,
+                        textAlign = TextAlign.Center
+                    )
+                }
 
-                Text(
-                    text = timeTable.getWeekName(date, 1),
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.primary
-                )
-            }
+                repeat(timeTable.days[page].getLessons(Date(),0).size) {
+                    Card(date = date, lesson = timeTable.days[page].getLessons(Date(),0)[it],
+                        state =
+                        if(date.weekDayNum() - 1 != selectedDay.value)
+                            CardState.disable
+                        else if(date.minutes() > timeTable.days[page].getLessons(Date(),0)[it].end)
+                            CardState.disable
+                        else if(date.minutes() >= timeTable.days[page].getLessons(Date(),0)[it].start &&
+                            date.minutes() <= timeTable.days[page].getLessons(Date(),0)[it].end)
+                            CardState.active
+                        else if(date.minutes() < timeTable.days[page].getLessons(Date(),0)[it].start &&
+                            (it ==  0 || date.minutes() > timeTable.days[page].getLessons(Date(),0)[it - 1].end))
+                            CardState.wait else CardState.highlight
+                    )
+                    if(it != 15) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
 
-            if(timeTable.days[selectedDay].getLessons(Date(), 1).isEmpty()) {
-                Text(
-                    text ="Сегодня пар нет",
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth(),
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.onSecondary,
-                    textAlign = TextAlign.Center
-                )
-            }
+                Row(
+                    modifier = Modifier.padding(0.dp,16.dp,0.dp,8.dp)
+                ) {
+                    Text(
+                        text = "Следующая неделя",
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primary
+                    )
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .weight(1f, true))
 
-            repeat(timeTable.days[selectedDay].getLessons(Date(),1).size) {
-                Card(date = date, lesson = timeTable.days[selectedDay].getLessons(Date(),1)[it], state = CardState.disable)
-                if(it != 15) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = timeTable.getWeekName(date, 1),
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
+
+                if(timeTable.days[page].getLessons(Date(), 1).isEmpty()) {
+                    Text(
+                        text ="Сегодня пар нет",
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .fillMaxWidth(),
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.onSecondary,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                repeat(timeTable.days[page].getLessons(Date(),1).size) {
+                    Card(date = date, lesson = timeTable.days[page].getLessons(Date(),1)[it], state = CardState.disable)
+                    if(it != 15) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
         }

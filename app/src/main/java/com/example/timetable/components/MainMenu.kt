@@ -1,5 +1,6 @@
 package com.example.timetable.components
 
+import android.content.Context
 import android.os.Debug
 import android.util.Log
 import androidx.compose.foundation.background
@@ -10,14 +11,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.timetable.*
-import com.example.timetable.structure.Day
-import com.example.timetable.structure.TimeTableStructure
+import com.example.timetable.structure.*
 import com.example.timetable.ui.theme.TimeTableTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.gson.Gson
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import java.util.*
@@ -29,6 +31,15 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
     var systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     var barColor = MaterialTheme.colors.background
+    var context = LocalContext.current
+
+    var savedTimeTable = remember {
+        mutableStateOf(
+            Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE).getString("timetable", Gson().toJson(
+                ServerTimeTable(-1, emptyTimeTable)
+            )), ServerTimeTable::class.java)
+        )
+    }
 
     SideEffect {
         systemController.setNavigationBarColor(
@@ -40,7 +51,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
     }
 
     Box {
-        TimeTableView(date, timeTableStructure, selectedDay)
+        TimeTableView(date, savedTimeTable, selectedDay)
         Column(
             modifier = Modifier.fillMaxSize()
         ) {

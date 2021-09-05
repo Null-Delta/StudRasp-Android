@@ -1,5 +1,7 @@
 package com.example.timetable.structure
 
+import android.util.JsonReader
+import android.util.JsonWriter
 import com.example.timetable.weekIndex
 import java.util.*
 
@@ -18,4 +20,22 @@ class TimeTableStructure(var name: String, var firstWeek: String, var secondWeek
     fun getWeekName(date: Date, index: Int): String {
         return if(date.weekIndex() == 0) (if(index == 0) firstWeek else secondWeek) else (if(index == 0) secondWeek else firstWeek)
     }
+
+}
+
+val emptyTimeTable: TimeTableStructure
+    get() = TimeTableStructure("","","", listOf(
+        Day(),Day(),Day(),Day(),Day(),Day(),Day()
+    ))
+
+class ServerTimeTable(var id: Int, var info: TimeTableStructure) {
+
+}
+
+class error(var code: Int, var message: String) {
+
+}
+
+class requestStruct(var error: error, var timetable: ServerTimeTable?) {
+
 }

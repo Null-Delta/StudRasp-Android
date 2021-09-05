@@ -21,9 +21,11 @@ import com.example.timetable.components.MainMenu
 import com.example.timetable.ui.theme.TimeTableTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import java.util.*
 
+@InternalCoroutinesApi
 @ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
     var date = mutableStateOf(Date())
@@ -33,10 +35,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-
             TimeTableTheme {
                 LaunchedEffect(key1 = date.value) {
-                    delay(60 * 1000)
+                    delay(20 * 1000)
                     date.value = Date()
                 }
                 // A surface container using the 'background' color from the theme

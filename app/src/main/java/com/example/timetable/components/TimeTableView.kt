@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -39,8 +40,11 @@ import java.util.*
 @InternalCoroutinesApi
 @ExperimentalPagerApi
 @Composable
-fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selectedDay: MutableState<Int>) {
+fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selectedDay: MutableState<Int>, paddingValues: PaddingValues) {
     val context = LocalContext.current
+
+    //var scrolls = listOf<ScrollState>()
+    val scrollState = rememberScrollState(0)
 
     val pagerState = rememberPagerState(
         pageCount = 7,
@@ -72,6 +76,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
 
     Column(
         modifier = Modifier
+            .padding(paddingValues)
             .fillMaxSize()
     ) {
         Row(
@@ -81,7 +86,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
         ) {
             Text(
                 text = "Расписание",
-                fontSize = 24.sp,
+                fontSize = 32.sp,
                 fontFamily = MaterialTheme.typography.body1.fontFamily,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colors.primary,
@@ -90,6 +95,12 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f, true))
+        }
+
+        Row(
+            modifier = Modifier
+                .padding(16.dp,0.dp,16.dp,16.dp),
+        ) {
             TextButton(
                 onClick = {
                     loadRequest.launch(Intent(context, LoadTimeTableActivity::class.java))
@@ -108,6 +119,10 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                     fontWeight = FontWeight.Medium,
                 )
             }
+
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f, true))
         }
 
         if(timeTable.value.id != -1) {
@@ -117,18 +132,18 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
             ) { page ->
                 Column(
                     modifier = Modifier
-                        .verticalScroll(ScrollState(0), true, null, false)
-                        .padding(16.dp, 0.dp, 16.dp, 132.dp)
+                        .verticalScroll(rememberScrollState(), true, null, false)
+                        .padding(16.dp, 0.dp, 16.dp, 76.dp)
                 ) {
                     Row(
-                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
                     ) {
                         Text(
                             text = "Текущая неделя",
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colors.primary
+                            color = MaterialTheme.colors.onSecondary
                         )
                         Spacer(
                             modifier = Modifier
@@ -141,7 +156,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colors.primary
+                            color = MaterialTheme.colors.onSecondary
                         )
                     }
 
@@ -164,15 +179,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                             date = date,
                             lesson = timeTable.value.info.days[page].getLessons(Date(), 0)[it],
                             state =
-                            if (date.weekDayNum() - 1 != page)
-                                CardState.disable
-                            else if (date.minutes() > timeTable.value.info.days[page].getLessons(
-                                    Date(),
-                                    0
-                                )[it].end
-                            )
-                                CardState.disable
-                            else if (date.minutes() >= timeTable.value.info.days[page].getLessons(
+                            if (date.minutes() >= timeTable.value.info.days[page].getLessons(
                                     Date(),
                                     0
                                 )[it].start &&
@@ -189,7 +196,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                                 (it == 0 || date.minutes() > timeTable.value.info.days[page].getLessons(
                                     Date(),
                                     0
-                                )[it - 1].end)
+                                )[it - 1].end) && (date.weekDayNum() - 1 == selectedDay.value)
                             )
                                 CardState.wait else CardState.highlight
                         )
@@ -199,14 +206,14 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                     }
 
                     Row(
-                        modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 8.dp)
+                        modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 16.dp)
                     ) {
                         Text(
                             text = "Следующая неделя",
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colors.primary
+                            color = MaterialTheme.colors.onSecondary
                         )
                         Spacer(
                             modifier = Modifier
@@ -219,7 +226,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colors.primary
+                            color = MaterialTheme.colors.onSecondary
                         )
                     }
 
@@ -241,7 +248,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         Card(
                             date = date,
                             lesson = timeTable.value.info.days[page].getLessons(Date(), 1)[it],
-                            state = CardState.disable
+                            state = CardState.highlight
                         )
                         if (it != 15) {
                             Spacer(modifier = Modifier.height(8.dp))

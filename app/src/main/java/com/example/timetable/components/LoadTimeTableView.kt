@@ -29,6 +29,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.timetable.structure.ServerTimeTable
+import com.example.timetable.structure.mainDomain
 import com.example.timetable.structure.requestStruct
 import com.example.timetable.ui.theme.TimeTableTheme
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -106,7 +107,7 @@ fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
             
             TextButton(onClick = {
                 val queue = Volley.newRequestQueue(context)
-                val url = "http://hytale-main.ru/main.php?action=table_q&index=${code.value}"
+                val url = "https://${mainDomain}/main.php?action=get_timetable&index=${code.value}"
                 val stringRequest = StringRequest(
                     Request.Method.GET, url,
                     { response ->

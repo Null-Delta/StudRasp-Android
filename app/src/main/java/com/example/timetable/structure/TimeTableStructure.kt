@@ -6,7 +6,7 @@ import com.example.timetable.weekIndex
 import java.util.*
 
 
-class Lesson(var name: String, var teacherName: String, var audience: String, var type: String, var start: Int, var end: Int) {
+class Lesson(var name: String, var teacherName: String, var audience: String, var type: String, var start: Int, var end: Int, var index: Int?) {
 
 }
 
@@ -27,6 +27,8 @@ val emptyTimeTable: TimeTableStructure
     get() = TimeTableStructure("","","", listOf(
         Day(),Day(),Day(),Day(),Day(),Day(),Day()
     ))
+
+val mainDomain = "studrasp.ru"
 
 class ServerTimeTable(var id: Int, var info: TimeTableStructure) {
 

@@ -1,5 +1,6 @@
 package com.example.timetable
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
     var selectedDay = mutableStateOf(date.value.weekDayNum() - 1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
 
@@ -59,10 +61,12 @@ fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
 
+@OptIn(InternalCoroutinesApi::class, com.google.accompanist.pager.ExperimentalPagerApi::class)
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     TimeTableTheme {
-        Greeting("Android")
+        MainMenu(date = Date(), selectedDay = mutableStateOf(0))
     }
 }

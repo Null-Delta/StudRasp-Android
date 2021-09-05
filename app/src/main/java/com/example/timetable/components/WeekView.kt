@@ -1,4 +1,5 @@
 package com.example.timetable.components
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -8,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +41,7 @@ fun WeekView(date: Date,selected: MutableState<Int>) {
 }
 
 @Composable
-fun DayView(date: Date,index: Int,selectedDay: MutableState<Int>, today: Boolean, modifier: Modifier = Modifier.fillMaxWidth()) {
+fun DayView(date: Date,index: Int,selectedDay: MutableState<Int>, today: Boolean, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .shadow(if (selectedDay.value == index) 4.dp else 0.dp, MaterialTheme.shapes.medium, true)
@@ -53,6 +55,7 @@ fun DayView(date: Date,index: Int,selectedDay: MutableState<Int>, today: Boolean
                 MaterialTheme.shapes.medium
             )
             .width(42.dp)
+            .height(52.dp)
             .padding(0.dp, 0.dp, 0.dp, 0.dp)
     ) {
         TextButton(onClick = { selectedDay.value = index }) {
@@ -70,10 +73,11 @@ fun DayView(date: Date,index: Int,selectedDay: MutableState<Int>, today: Boolean
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     TimeTableTheme {
-        //WeekView(Date(), 0)
+        WeekView(Date(), mutableStateOf(0))
     }
 }

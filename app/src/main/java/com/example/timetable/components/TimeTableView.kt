@@ -162,7 +162,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
 
                     if (timeTable.value.info.days[page].getLessons(Date(), 0).isEmpty()) {
                         Text(
-                            text = "Сегодня пар нет",
+                            text = "пар нет",
                             modifier = Modifier
                                 .padding(24.dp)
                                 .fillMaxWidth(),
@@ -179,7 +179,18 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                             date = date,
                             lesson = timeTable.value.info.days[page].getLessons(Date(), 0)[it],
                             state =
-                            if (date.minutes() >= timeTable.value.info.days[page].getLessons(
+
+                            if (date.minutes() < timeTable.value.info.days[page].getLessons(
+                            Date(),
+                            0
+                        )[it].start &&
+                        (it == 0 || date.minutes() > timeTable.value.info.days[page].getLessons(
+                            Date(),
+                            0
+                        )[it - 1].end) && (page == date.weekDayNum() - 1)
+                    )
+                        CardState.wait
+                           else if (date.minutes() >= timeTable.value.info.days[page].getLessons(
                                     Date(),
                                     0
                                 )[it].start &&
@@ -188,17 +199,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                                     0
                                 )[it].end
                             )
-                                CardState.active
-                            else if (date.minutes() < timeTable.value.info.days[page].getLessons(
-                                    Date(),
-                                    0
-                                )[it].start &&
-                                (it == 0 || date.minutes() > timeTable.value.info.days[page].getLessons(
-                                    Date(),
-                                    0
-                                )[it - 1].end) && (date.weekDayNum() - 1 == selectedDay.value)
-                            )
-                                CardState.wait else CardState.highlight
+                                CardState.active else CardState.highlight
                         )
                         if (it != 15) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -232,7 +233,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
 
                     if (timeTable.value.info.days[page].getLessons(Date(), 1).isEmpty()) {
                         Text(
-                            text = "Сегодня пар нет",
+                            text = "пар нет",
                             modifier = Modifier
                                 .padding(24.dp)
                                 .fillMaxWidth(),

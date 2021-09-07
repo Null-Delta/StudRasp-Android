@@ -108,7 +108,6 @@ fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
             TextButton(onClick = {
                 Fuel.post("https://${mainDomain}/main.php", listOf("action" to "get_timetable", "index" to code.value))
                     .responseString { request, response, result ->
-                        Log.i("a",result.get())// response
                         var request: requestStruct = jacksonObjectMapper().readValue(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
                             errorText.value = request.error.message

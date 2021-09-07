@@ -12,11 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
-            android:name=".components.RegistrationActivity"
-            android:exported="true"
-            android:label="@string/title_activity_registration"
-            android:theme="@style/Theme.TimeTable" />
-        <activity
             android:name=".AccountActivity"
             android:exported="true"
             android:label="@string/title_activity_account"

@@ -38,9 +38,6 @@ import java.util.*
 fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selectedDay: MutableState<Int>, paddingValues: PaddingValues) {
     val context = LocalContext.current
 
-    //var scrolls = listOf<ScrollState>()
-    val scrollState = rememberScrollState(0)
-
     val pagerState = rememberPagerState(
         pageCount = 7,
         selectedDay.value,0f,2,false
@@ -76,7 +73,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp,0.dp,16.dp,16.dp),
+                .padding(16.dp,16.dp,16.dp,16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

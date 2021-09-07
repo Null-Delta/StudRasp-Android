@@ -36,6 +36,10 @@ class error(var code: Int, var message: String) {
 
 }
 
-class requestStruct(var error: error, var timetable: ServerTimeTable?) {
+class requestStruct(var error: error, var timetable: ServerTimeTable?, var session: String?, var login: String?) {
+
+}
+
+class user(var login: String, var session: String) {
 
 }

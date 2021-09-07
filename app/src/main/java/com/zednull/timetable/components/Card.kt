@@ -192,7 +192,6 @@ fun Card(date: Date, lesson: Lesson, state: CardState) {
             }
         }
     }
-
 }
 
 

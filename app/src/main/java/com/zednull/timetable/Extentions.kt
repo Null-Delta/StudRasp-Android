@@ -68,9 +68,10 @@ fun Date.weekIndex(): Int {
     var checkDate = this.firstDayOfWeek()
     var calendar = Calendar.getInstance()
     calendar.firstDayOfWeek = Calendar.MONDAY
+    calendar.minimalDaysInFirstWeek = 1
     calendar.time = checkDate
 
-    return (calendar.get(Calendar.WEEK_OF_YEAR) + 1) % 2
+    return (calendar.get(Calendar.WEEK_OF_YEAR)) % 2
 }
 
 fun Date.weekDayName(): String {

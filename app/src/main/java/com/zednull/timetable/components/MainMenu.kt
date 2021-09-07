@@ -38,6 +38,17 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
+
+    SideEffect {
+        systemController.setNavigationBarColor(
+            barColor,useDarkIcons
+        )
+        systemController.setStatusBarColor(
+            barColor,useDarkIcons
+        )
+    }
+
+
     val context = LocalContext.current
     val menu = remember { mutableStateOf(0) }
 
@@ -48,15 +59,6 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
             Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE).getString("timetable", Gson().toJson(
                 ServerTimeTable(-1, emptyTimeTable)
             )), ServerTimeTable::class.java)
-        )
-    }
-
-    SideEffect {
-        systemController.setNavigationBarColor(
-            barColor,useDarkIcons
-        )
-        systemController.setStatusBarColor(
-            barColor,useDarkIcons
         )
     }
 

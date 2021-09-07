@@ -24,15 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.Parameters
+import com.github.kittinunf.fuel.httpPost
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.zednull.timetable.structure.ServerTimeTable
 import com.zednull.timetable.structure.mainDomain
 import com.zednull.timetable.structure.requestStruct
 import com.zednull.timetable.ui.theme.TimeTableTheme
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
@@ -56,8 +56,9 @@ fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
     }
     
     if(isErrorShow.value) {
-        AlertDialog(onDismissRequest = { isErrorShow.value = false },
-            title = { Text( text = "Ошибка")},
+        AlertDialog(
+            onDismissRequest = { isErrorShow.value = false },
+            title = { Text(text = "Ошибка") },
             text = {
                 Text(text = errorText.value)
             },
@@ -105,26 +106,17 @@ fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
             Spacer(modifier = Modifier.width(8.dp))
             
             TextButton(onClick = {
-                val queue = Volley.newRequestQueue(context)
-                val url = "https://${mainDomain}/main.php?action=get_timetable&index=${code.value}"
-                val stringRequest = StringRequest(
-                    Request.Method.GET, url,
-                    { response ->
-                        Log.i("json", response)
-                        var request: requestStruct = jacksonObjectMapper().readValue(response,requestStruct::class.java)
+                Fuel.post("https://${mainDomain}/main.php", listOf("action" to "get_timetable", "index" to code.value))
+                    .responseString { request, response, result ->
+                        Log.i("a",result.get())// response
+                        var request: requestStruct = jacksonObjectMapper().readValue(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
                             errorText.value = request.error.message
                             isErrorShow.value = true
                         } else {
                             loadTable.value = request.timetable!!
                         }
-                    },
-                    {
-                        errorText.value = "Не удалось получить ответ от сервера. Проверьте подключение к интернету и попробуйте снова."
-                        isErrorShow.value = true
-                    })
-
-                queue.add(stringRequest)
+                    }
 
             },
                 modifier = Modifier

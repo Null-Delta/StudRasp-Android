@@ -240,27 +240,6 @@ fun cardState(date: Date, timeTable: MutableState<ServerTimeTable>, page: Int, l
     else if (date.minutes() >= timeTable.value.info.days[page].getLessons(Date(), 0)[lesson].start &&
         date.minutes() <= timeTable.value.info.days[page].getLessons(Date(), 0)[lesson].end) CardState.active
     else CardState.highlight
-
-    return if (date.minutes() < timeTable.value.info.days[page].getLessons(
-            Date(),
-            0
-        )[lesson].start &&
-        (lesson == 0 || date.minutes() > timeTable.value.info.days[page].getLessons(
-            Date(),
-            0
-        )[lesson - 1].end) && (page == date.weekDayNum() - 1)
-    )
-        CardState.wait
-    else if (date.minutes() >= timeTable.value.info.days[page].getLessons(
-            Date(),
-            0
-        )[lesson].start &&
-        date.minutes() <= timeTable.value.info.days[page].getLessons(
-            Date(),
-            0
-        )[lesson].end
-    )
-        CardState.active else CardState.highlight
 }
 
 @SuppressLint("UnrememberedMutableState")

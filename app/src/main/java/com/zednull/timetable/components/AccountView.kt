@@ -22,6 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.Navigation
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.timetable.AccountActivity
@@ -32,7 +34,7 @@ import com.zednull.timetable.structure.user
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
 @Composable
-fun AccountView(activity: AccountActivity) {
+fun AccountView(navigation: NavHostController) {
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
@@ -132,7 +134,7 @@ fun AccountView(activity: AccountActivity) {
             Modifier.padding(16.dp)
         ) {
             TextButton(onClick = {
-                activity.finish()
+                navigation.popBackStack()
             },
             ) {
                 Text(

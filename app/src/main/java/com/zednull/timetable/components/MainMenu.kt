@@ -27,6 +27,7 @@ import com.zednull.timetable.ui.theme.TimeTableTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
+import com.zednull.timetable.components.ui.AccountView
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.*
 
@@ -92,7 +93,11 @@ fun Navigation(navController: NavHostController, date: Date, table: MutableState
             }
         }
         composable("settings") {
-            SettingsView()
+            SettingsNavigation(paddingValues)
+        }
+
+        composable("account") {
+            AccountView(navController)
         }
     }
 }

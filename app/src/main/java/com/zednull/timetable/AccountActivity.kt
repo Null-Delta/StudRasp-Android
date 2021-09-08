@@ -23,7 +23,7 @@ class AccountActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AccountView(this)
+                    //AccountView(this)
                 }
             }
         }

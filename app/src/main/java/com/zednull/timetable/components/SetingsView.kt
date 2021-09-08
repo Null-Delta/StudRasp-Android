@@ -12,6 +12,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,13 +20,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.zednull.timetable.AccountActivity
 import com.zednull.timetable.R
+import com.zednull.timetable.components.ui.AccountView
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
 @Composable
-fun SettingsView() {
+fun SettingsView(navController: NavController) {
+
     var context = LocalContext.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -34,7 +44,7 @@ fun SettingsView() {
             painter = painterResource(id = R.drawable.appicon),
             contentDescription = null,
         modifier = Modifier
-            .padding(0.dp,32.dp,0.dp,0.dp)
+            .padding(0.dp, 32.dp, 0.dp, 0.dp)
             .height(128.dp)
             .width(128.dp)
             .verticalScroll(ScrollState(0), true, null, false)
@@ -58,10 +68,10 @@ fun SettingsView() {
         )
 
         TextButton(onClick = {
-            context.startActivity(Intent(context, AccountActivity::class.java))
+            navController.navigate("account", )
         },
         modifier = Modifier
-            .padding(16.dp,0.dp,16.dp,32.dp)
+            .padding(16.dp, 0.dp, 16.dp, 32.dp)
             .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
             .fillMaxWidth()
             .height(42.dp)
@@ -81,7 +91,7 @@ fun SettingsView() {
 
         },
             modifier = Modifier
-                .padding(16.dp,0.dp,16.dp,32.dp)
+                .padding(16.dp, 0.dp, 16.dp, 32.dp)
                 .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
                 .fillMaxWidth()
                 .height(42.dp)
@@ -100,11 +110,29 @@ fun SettingsView() {
     }
 }
 
+@Composable
+fun SettingsNavigation(paddingValues: PaddingValues) {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController,
+        startDestination = "settings",
+    modifier = Modifier.padding(paddingValues)
+    ) {
+        composable("settings") {
+            SettingsView(navController)
+        }
+
+        composable("account") {
+            AccountView(navController)
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun SettingsViewPreview() {
     TimeTableTheme {
-        SettingsView()
+        //SettingsView()
     }
 }

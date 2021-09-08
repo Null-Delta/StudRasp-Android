@@ -41,7 +41,7 @@ fun SettingsView() {
         )
 
         Text(
-            text = "StudPasp",
+            text = "StudRasp",
             fontSize = 24.sp,
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Bold,
@@ -49,7 +49,7 @@ fun SettingsView() {
         )
 
         Text(
-            text = "v0.9.5 (beta)",
+            text = "v0.9.6 (beta)",
             fontSize = 16.sp,
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Bold,

@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.zednull.timetable.AccountActivity
 import com.zednull.timetable.R
 import com.zednull.timetable.components.ui.AccountView
+import com.zednull.timetable.components.ui.MyTimeTableView
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
 @Composable
@@ -125,6 +126,9 @@ fun SettingsNavigation(paddingValues: PaddingValues) {
 
         composable("account") {
             AccountView(navController)
+        }
+        composable("myTimeTable") {
+            MyTimeTableView(navController)
         }
     }
 }

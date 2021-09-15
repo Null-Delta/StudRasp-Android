@@ -8,6 +8,10 @@ val AppDisable = Color(0xFFDCEAF1)
 var AppEnableLight = Color(0x88518495)
 var AppDisableLight = Color(0xCCDCEAF1)
 
+var AppChangedGlobal = Color(0xFFD79515)
+var AppChangedGlobalText = Color(0xFFEBB423)
+var AppAlterChangedGlobalText = Color(0x88EBB423)
+
 val AppBackgroundDark = Color(0xFF161616)
 val AppEnableDark = Color(0xFF7798AB)
 val AppDisableDark = Color(0xFF294656)

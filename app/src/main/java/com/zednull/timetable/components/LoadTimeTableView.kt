@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Parameters
+import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.httpPost
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.zednull.timetable.structure.ServerTimeTable
@@ -106,8 +107,16 @@ fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
             Spacer(modifier = Modifier.width(8.dp))
             
             TextButton(onClick = {
-                Fuel.post("https://${mainDomain}/main.php", listOf("action" to "get_timetable", "index" to code.value))
+                Log.i("aaaaa","a")
+
+
+                Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to code.value))
+                    //.jsonBody("{ \"action\" : \"get_timetable\", \"id\" : \"${code.value}\" }")
+
                     .responseString { request, response, result ->
+                        Log.i("aaaaa","hey")
+                        Log.i("aaaaa", result.get())
+
                         var request: requestStruct = jacksonObjectMapper().readValue(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
                             errorText.value = request.error.message

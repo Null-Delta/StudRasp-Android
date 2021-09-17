@@ -4,7 +4,7 @@ import com.zednull.timetable.weekIndex
 import java.util.*
 
 
-class Lesson(var name: String, var teacherName: String, var audience: String, var type: String, var start: Int, var end: Int, var index: Int?) {
+class Lesson(var name: String, var teacherName: String, var audience: String, var type: String, var start: Int, var end: Int, var LessonNumber: Int?) {
 
 }
 
@@ -28,7 +28,7 @@ val emptyTimeTable: TimeTableStructure
 
 val mainDomain = "studrasp.ru"
 
-class ServerTimeTable(var id: Int, var info: TimeTableStructure) {
+class ServerTimeTable(var id: Int, var json: TimeTableStructure) {
 
 }
 

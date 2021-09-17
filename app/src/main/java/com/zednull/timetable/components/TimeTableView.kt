@@ -105,7 +105,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                 ),
             ) {
                 Text(
-                    text = if(timeTable.value.info.name == "") "Выбрать" else timeTable.value.info.name,
+                    text = if(timeTable.value.json.name == "") "Выбрать" else timeTable.value.json.name,
                     fontSize = 20.sp,
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
                     fontWeight = FontWeight.Medium,
@@ -144,7 +144,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
 
                         Text(
-                            text = timeTable.value.info.getWeekName(date, 0),
+                            text = timeTable.value.json.getWeekName(date, 0),
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
@@ -152,7 +152,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    if (timeTable.value.info.days[page].getLessons(Date(), 0).isEmpty()) {
+                    if (timeTable.value.json.days[page].getLessons(Date(), 0).isEmpty()) {
                         Text(
                             text = "Сегодня пар нет",
                             modifier = Modifier
@@ -166,10 +166,10 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    repeat(timeTable.value.info.days[page].getLessons(Date(), 0).size) {
+                    repeat(timeTable.value.json.days[page].getLessons(Date(), 0).size) {
                         Card(
                             date = date,
-                            lesson = timeTable.value.info.days[page].getLessons(Date(), 0)[it],
+                            lesson = timeTable.value.json.days[page].getLessons(Date(), 0)[it],
                             state = cardState(date, timeTable, page, it)
                         )
                         if (it != 15) {
@@ -194,7 +194,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
 
                         Text(
-                            text = timeTable.value.info.getWeekName(date, 1),
+                            text = timeTable.value.json.getWeekName(date, 1),
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
@@ -202,7 +202,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    if (timeTable.value.info.days[page].getLessons(Date(), 1).isEmpty()) {
+                    if (timeTable.value.json.days[page].getLessons(Date(), 1).isEmpty()) {
                         Text(
                             text = "Сегодня пар нет",
                             modifier = Modifier
@@ -216,10 +216,10 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    repeat(timeTable.value.info.days[page].getLessons(Date(), 1).size) {
+                    repeat(timeTable.value.json.days[page].getLessons(Date(), 1).size) {
                         Card(
                             date = date,
-                            lesson = timeTable.value.info.days[page].getLessons(Date(), 1)[it],
+                            lesson = timeTable.value.json.days[page].getLessons(Date(), 1)[it],
                             state = CardState.highlight
                         )
                         if (it != 15) {
@@ -235,10 +235,10 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
 
 fun cardState(date: Date, timeTable: MutableState<ServerTimeTable>, page: Int, lesson: Int): CardState {
     return if(date.weekDayNum() - 1 != page) CardState.highlight
-    else if(date.minutes() < timeTable.value.info.days[page].getLessons(Date(), 0)[lesson].start &&
-        (lesson == 0 || date.minutes() > timeTable.value.info.days[page].getLessons(Date(), 0)[lesson - 1].end)) CardState.wait
-    else if (date.minutes() >= timeTable.value.info.days[page].getLessons(Date(), 0)[lesson].start &&
-        date.minutes() <= timeTable.value.info.days[page].getLessons(Date(), 0)[lesson].end) CardState.active
+    else if(date.minutes() < timeTable.value.json.days[page].getLessons(Date(), 0)[lesson].start &&
+        (lesson == 0 || date.minutes() > timeTable.value.json.days[page].getLessons(Date(), 0)[lesson - 1].end)) CardState.wait
+    else if (date.minutes() >= timeTable.value.json.days[page].getLessons(Date(), 0)[lesson].start &&
+        date.minutes() <= timeTable.value.json.days[page].getLessons(Date(), 0)[lesson].end) CardState.active
     else CardState.highlight
 }
 

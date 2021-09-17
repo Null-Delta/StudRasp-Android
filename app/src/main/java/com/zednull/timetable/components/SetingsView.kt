@@ -56,6 +56,7 @@ fun SettingsView(navController: NavController) {
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.primary,
+
         )
 
         Text(

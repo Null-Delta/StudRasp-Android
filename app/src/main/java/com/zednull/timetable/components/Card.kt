@@ -55,7 +55,7 @@ fun Card(date: Date, lesson: Lesson, state: CardState) {
                     , CircleShape)
             ) {
                 Text(
-                    text = "${if (lesson.index== null) 0 else lesson.index!!}" ,
+                    text = "${if (lesson.LessonNumber== null) 0 else lesson.LessonNumber!!}" ,
                     modifier = Modifier
                         .align(Alignment.Center),
                     fontSize = 12.sp,
@@ -199,6 +199,6 @@ fun Card(date: Date, lesson: Lesson, state: CardState) {
 @Composable
 fun preview() {
     TimeTableTheme() {
-        Card(date = Date(), lesson = Lesson("Дискретка","Жук А.С.","А205","Лк",0,0, index = null), state = CardState.active)
+        Card(date = Date(), lesson = Lesson("Дискретка","Жук А.С.","А205","Лк",0,0, LessonNumber = null), state = CardState.active)
     }
 }

@@ -1,6 +1,7 @@
 package com.zednull.timetable.components.ui
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,6 +38,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import com.zednull.timetable.LoadListOfPartsActivity
 
 
 enum class MyTimeTableState {
@@ -60,15 +62,14 @@ fun DrawTable(state: MyTimeTableState)
                     MaterialTheme.colors.secondaryVariant,
                 MaterialTheme.shapes.medium
             )
-            .pointerInput(Unit) { // (1)
-                val maxWidth = this.size.width // (2)
+            .pointerInput(Unit) {
                 detectTapGestures(
-                    onPress = { // (3)
+                    onPress = {
                         val pressStartTime = System.currentTimeMillis()
                         isPressed.value = true
-                        this.tryAwaitRelease() // (4)
+                        this.tryAwaitRelease()
                         val pressEndTime = System.currentTimeMillis()
-                        val totalPressTime = pressEndTime - pressStartTime // (5)
+                        val totalPressTime = pressEndTime - pressStartTime
                         if (totalPressTime < 200) {
                             //переход к расписанию
                             Log.i("ss", "click!")
@@ -202,6 +203,19 @@ fun MyTimeTableView(navigation: NavHostController) {
         )
     }
 
+        // временное решение
+    val testname = remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val loadRequest = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result != null && result.data != null) {
+            testname.value = "" + result.data!!.getStringExtra("name")
+        }
+    }
+        //временное решение
+
     Column(
 
         modifier = Modifier
@@ -238,6 +252,11 @@ fun MyTimeTableView(navigation: NavHostController) {
                 TextButton(
                     onClick = {
                         // в редактор
+                        // временное решение
+                        var data = Intent(context, LoadListOfPartsActivity::class.java)
+                        data.putExtra("type",1)
+                        loadRequest.launch(data)
+                        // временное решение
                     },
                 ) {
                     Text(

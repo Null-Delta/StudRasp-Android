@@ -31,6 +31,7 @@ import com.zednull.timetable.components.ui.AccountView
 import com.zednull.timetable.components.ui.MyTimeTableView
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.*
+import com.zednull.timetable.LoadListOfPartsActivity
 
 
 @InternalCoroutinesApi

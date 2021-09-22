@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,6 +30,8 @@ import androidx.navigation.compose.rememberNavController
 import com.zednull.timetable.AccountActivity
 import com.zednull.timetable.R
 import com.zednull.timetable.components.ui.AccountView
+import com.zednull.timetable.components.ui.MyTimeTableView
+import com.zednull.timetable.components.ui.PartEditorView
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
 @Composable
@@ -127,6 +130,10 @@ fun SettingsNavigation(paddingValues: PaddingValues) {
         composable("account") {
             AccountView(navController)
         }
+        composable("myTimeTable") {
+            MyTimeTableView(navController)
+        }
+
     }
 }
 

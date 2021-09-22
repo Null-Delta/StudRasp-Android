@@ -28,8 +28,10 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.timetable.components.ui.AccountView
 import com.zednull.timetable.structure.TimeTableStructure
+import com.zednull.timetable.components.ui.MyTimeTableView
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.*
+import com.zednull.timetable.LoadListOfPartsActivity
 
 
 @InternalCoroutinesApi
@@ -95,10 +97,6 @@ fun Navigation(navController: NavHostController, date: Date, table: MutableState
         composable("settings") {
             SettingsNavigation(paddingValues)
         }
-
-        composable("account") {
-            AccountView(navController)
-        }
     }
 }
 
@@ -139,7 +137,8 @@ fun bottomBar(navController: NavController, menu: MutableState<Int>) {
                 selected = menu.value == 1,
                 onClick = {
                     menu.value = 1
-                    navController.navigate("settings") {
+                    navController.navigate("settings")
+                    {
                         navController.graph.startDestinationRoute?.let { route ->
                             popUpTo(route) {
                                 saveState = true

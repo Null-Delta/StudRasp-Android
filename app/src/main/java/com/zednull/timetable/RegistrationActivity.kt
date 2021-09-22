@@ -274,9 +274,8 @@ fun checkErrors(log: String, email: String, pass: String, error: MutableState<St
     } else if (!emailExt.matches(email) && email.count() != 0) {
         error.value = "Введена некорректная почта"
         return true
-    } else if ((false//!passExt1.matches(pass) //||
-         ) && pass.count() != 0) {
-        error.value = "Введен некорректный пароль. Пароль должен быть длиной минимум 8 символов, сродержать заглавные, прописные буквы, цифры и спец. символ (!.-?#@)"
+    } else if (!passExt.matches(pass) && pass.count() != 0) {
+        error.value = "Введен некорректный пароль. Пароль должен быть длиной минимум 8 символов, содержать заглавные и прописные буквы, цифры и спец. символ (!.-?#@)"
         return true
     } else {
         error.value = ""
@@ -286,11 +285,7 @@ fun checkErrors(log: String, email: String, pass: String, error: MutableState<St
 }
 
 val emailExt = """([a-z0-9.])+@([a-z0-9.])+\.([a-z0-9]){2,}""".toRegex()
-val passExt1 = """(.*([a-z])+)(.*([A-Z])+)(.*([0-9])+)(.*([.,()!@#%^&*])+)""".toRegex()
-val passExt2 = """(.*([A-Z])+)""".toRegex()
-val passExt3 = """(.*([0-9])+)""".toRegex()
-val passExt4 = """(.*([.,()!@#%^&*])+)""".toRegex()
-val passExt5 = """([a-zA-Z0-9.,()!@#%^&*]){8,}""".toRegex()
+val passExt = """(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])[0-9a-zA-Z!@#$-_%^&*]{8,}""".toRegex()
 
 
 @Preview(showBackground = true)

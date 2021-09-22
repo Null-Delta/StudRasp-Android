@@ -235,7 +235,7 @@ fun AccountView(navigation: NavHostController) {
             )
 
             TextButton(onClick = {
-
+                navigation.navigate("myTimeTable" )
             },
                 modifier = Modifier
                     .padding(16.dp,16.dp,16.dp,32.dp)

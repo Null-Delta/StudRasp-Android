@@ -58,6 +58,10 @@
             android:exported="true"
             android:theme="@style/Theme.TimeTable" />
         <activity
+            android:name=".LoadListOfPartsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TimeTable" />
+        <activity
             android:name=".RegistrationActivity"
             android:exported="true"
             android:theme="@style/Theme.TimeTable" />

@@ -11,7 +11,9 @@ private val DarkColorPalette = darkColors(
         secondary = AppDisableDark,
         background = AppBackgroundDark,
         onSecondary = AppEnableLightDark,
-        onPrimary = AppDisableLightDark
+        onPrimary = AppDisableLightDark,
+        primaryVariant = AppChangedGlobal,
+        secondaryVariant = AppChangedGlobalText
 )
 
 private val LightColorPalette = lightColors(
@@ -19,7 +21,9 @@ private val LightColorPalette = lightColors(
         secondary = AppDisable,
         background = AppBackground,
         onSecondary = AppEnableLight,
-        onPrimary = AppDisableLight
+        onPrimary = AppDisableLight,
+        primaryVariant = AppChangedGlobal,
+        secondaryVariant = AppChangedGlobalText
 )
 
 @Composable

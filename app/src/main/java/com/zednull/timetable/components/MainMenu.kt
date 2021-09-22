@@ -21,13 +21,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zednull.timetable.R
-import com.zednull.timetable.structure.ServerTimeTable
 import com.zednull.timetable.structure.emptyTimeTable
 import com.zednull.timetable.ui.theme.TimeTableTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.timetable.components.ui.AccountView
+import com.zednull.timetable.structure.TimeTableStructure
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.*
 
@@ -58,8 +58,8 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
     val savedTimeTable = remember {
         mutableStateOf(
             Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE).getString("timetable", Gson().toJson(
-                ServerTimeTable(-1, emptyTimeTable)
-            )), ServerTimeTable::class.java)
+                emptyTimeTable
+            )), TimeTableStructure::class.java)
         )
     }
 
@@ -73,7 +73,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
 @ExperimentalPagerApi
 @OptIn(InternalCoroutinesApi::class)
 @Composable
-fun Navigation(navController: NavHostController, date: Date, table: MutableState<ServerTimeTable>, day: MutableState<Int>, paddingValues: PaddingValues) {
+fun Navigation(navController: NavHostController, date: Date, table: MutableState<TimeTableStructure>, day: MutableState<Int>, paddingValues: PaddingValues) {
     NavHost(navController, startDestination = "home") {
         composable("home") {
             Box(

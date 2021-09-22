@@ -30,13 +30,16 @@ import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.httpPost
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.zednull.timetable.structure.ServerTimeTable
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.zednull.timetable.structure.TimeTableStructure
 import com.zednull.timetable.structure.mainDomain
 import com.zednull.timetable.structure.requestStruct
 import com.zednull.timetable.ui.theme.TimeTableTheme
+import java.util.*
 
 @Composable
-fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
+fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
     var systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     var barColor = MaterialTheme.colors.background
@@ -107,22 +110,19 @@ fun LoadTimeTableView(loadTable: MutableState<ServerTimeTable>) {
             Spacer(modifier = Modifier.width(8.dp))
             
             TextButton(onClick = {
-                Log.i("aaaaa","a")
-
-
                 Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to code.value))
                     //.jsonBody("{ \"action\" : \"get_timetable\", \"id\" : \"${code.value}\" }")
 
                     .responseString { request, response, result ->
-                        Log.i("aaaaa","hey")
-                        Log.i("aaaaa", result.get())
-
+                        //Log.i("test", result.get())
                         var request: requestStruct = jacksonObjectMapper().readValue(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
+
                             errorText.value = request.error.message
                             isErrorShow.value = true
                         } else {
-                            loadTable.value = request.timetable!!
+                            loadTable.value = request.timetable!!.json!!
+                            loadTable.value.TableID = request.timetable!!.id
                         }
                     }
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -22,20 +23,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zednull.timetable.LoadTimeTableActivity
 import com.zednull.timetable.minutes
-import com.zednull.timetable.structure.ServerTimeTable
 import com.zednull.timetable.ui.theme.TimeTableTheme
 import com.zednull.timetable.weekDayNum
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.gson.Gson
+import com.zednull.timetable.structure.TimeTableStructure
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.*
 
 @InternalCoroutinesApi
 @ExperimentalPagerApi
 @Composable
-fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selectedDay: MutableState<Int>, paddingValues: PaddingValues) {
+fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selectedDay: MutableState<Int>, paddingValues: PaddingValues) {
     val context = LocalContext.current
 
     val pagerState = rememberPagerState(
@@ -53,7 +54,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                 editor.putString("timetable", result.data!!.getStringExtra("timetable"))
                 editor.apply()
 
-                timeTable.value = Gson().fromJson(result.data!!.getStringExtra("timetable"), ServerTimeTable::class.java)
+                timeTable.value = Gson().fromJson(result.data!!.getStringExtra("timetable"), TimeTableStructure::class.java)
             }
         }
     }
@@ -95,6 +96,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
         ) {
             TextButton(
                 onClick = {
+                    Log.i("check","here");
                     loadRequest.launch(Intent(context, LoadTimeTableActivity::class.java))
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -105,7 +107,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                 ),
             ) {
                 Text(
-                    text = if(timeTable.value.json.name == "") "Выбрать" else timeTable.value.json.name,
+                    text = if(timeTable.value.name == "") "Выбрать" else timeTable.value.name,
                     fontSize = 20.sp,
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
                     fontWeight = FontWeight.Medium,
@@ -117,7 +119,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                 .weight(1f, true))
         }
 
-        if(timeTable.value.id != -1) {
+        if(timeTable.value.name != "") {
             HorizontalPager(
                 state = pagerState,
                 verticalAlignment = Alignment.Top,
@@ -144,7 +146,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
 
                         Text(
-                            text = timeTable.value.json.getWeekName(date, 0),
+                            text = timeTable.value.getWeekName(date, 0),
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
@@ -152,7 +154,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    if (timeTable.value.json.days[page].getLessons(Date(), 0).isEmpty()) {
+                    if (timeTable.value.days[page].getLessons(Date(), 0).isEmpty()) {
                         Text(
                             text = "Сегодня пар нет",
                             modifier = Modifier
@@ -166,11 +168,12 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    repeat(timeTable.value.json.days[page].getLessons(Date(), 0).size) {
+                    repeat(timeTable.value.days[page].getLessons(Date(), 0).size) {
                         Card(
                             date = date,
-                            lesson = timeTable.value.json.days[page].getLessons(Date(), 0)[it],
-                            state = cardState(date, timeTable, page, it)
+                            lesson = timeTable.value.days[page].getLessons(Date(), 0)[it],
+                            state = cardState(date, timeTable, page, it),
+                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(), 0)[it].LessonNumber!!]
                         )
                         if (it != 15) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -194,7 +197,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
 
                         Text(
-                            text = timeTable.value.json.getWeekName(date, 1),
+                            text = timeTable.value.getWeekName(date, 1),
                             fontSize = 16.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
@@ -202,7 +205,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    if (timeTable.value.json.days[page].getLessons(Date(), 1).isEmpty()) {
+                    if (timeTable.value.days[page].getLessons(Date(), 1).isEmpty()) {
                         Text(
                             text = "Сегодня пар нет",
                             modifier = Modifier
@@ -216,11 +219,12 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
                         )
                     }
 
-                    repeat(timeTable.value.json.days[page].getLessons(Date(), 1).size) {
+                    repeat(timeTable.value.days[page].getLessons(Date(), 1).size) {
                         Card(
                             date = date,
-                            lesson = timeTable.value.json.days[page].getLessons(Date(), 1)[it],
-                            state = CardState.highlight
+                            lesson = timeTable.value.days[page].getLessons(Date(), 1)[it],
+                            state = CardState.highlight,
+                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),1)[it].LessonNumber!!]
                         )
                         if (it != 15) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -233,12 +237,12 @@ fun TimeTableView(date: Date, timeTable: MutableState<ServerTimeTable>, selected
 }
 
 
-fun cardState(date: Date, timeTable: MutableState<ServerTimeTable>, page: Int, lesson: Int): CardState {
+fun cardState(date: Date, timeTable: MutableState<TimeTableStructure>, page: Int, lesson: Int): CardState {
     return if(date.weekDayNum() - 1 != page) CardState.highlight
-    else if(date.minutes() < timeTable.value.json.days[page].getLessons(Date(), 0)[lesson].start &&
-        (lesson == 0 || date.minutes() > timeTable.value.json.days[page].getLessons(Date(), 0)[lesson - 1].end)) CardState.wait
-    else if (date.minutes() >= timeTable.value.json.days[page].getLessons(Date(), 0)[lesson].start &&
-        date.minutes() <= timeTable.value.json.days[page].getLessons(Date(), 0)[lesson].end) CardState.active
+    else if(date.minutes() < timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].LessonNumber!!].start &&
+        (lesson == 0 || date.minutes() > timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson - 1].LessonNumber!!].end)) CardState.wait
+    else if (date.minutes() >= timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].LessonNumber!!].start &&
+        date.minutes() <= timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].LessonNumber!!].end) CardState.active
     else CardState.highlight
 }
 

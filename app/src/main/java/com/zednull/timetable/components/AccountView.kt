@@ -28,7 +28,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.timetable.AccountActivity
 import com.zednull.timetable.RegistrationActivity
-import com.zednull.timetable.structure.ServerTimeTable
 import com.zednull.timetable.structure.emptyTimeTable
 import com.zednull.timetable.structure.user
 import com.zednull.timetable.ui.theme.TimeTableTheme

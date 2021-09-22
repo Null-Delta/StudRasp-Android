@@ -14,10 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.zednull.timetable.components.LoadTimeTableView
-import com.zednull.timetable.structure.ServerTimeTable
 import com.zednull.timetable.structure.TimeTableStructure
 import com.zednull.timetable.ui.theme.TimeTableTheme
 import com.google.gson.Gson
+import com.zednull.timetable.structure.LessonTime
 
 class LoadTimeTableActivity : ComponentActivity() {
 
@@ -26,11 +26,19 @@ class LoadTimeTableActivity : ComponentActivity() {
         setContent {
             TimeTableTheme {
                 var loadedTable = remember {
-                    mutableStateOf(ServerTimeTable(-1, TimeTableStructure("","","", listOf())))
+                    mutableStateOf( TimeTableStructure("","","", listOf(), listOf(
+                        LessonTime(0,0),
+                        LessonTime(0,0),
+                        LessonTime(0,0),
+                        LessonTime(0,0),
+                        LessonTime(0,0),
+                        LessonTime(0,0),
+                        LessonTime(0,0)
+                    )))
                 }
 
                 LaunchedEffect(key1 = loadedTable.value) {
-                    if(loadedTable.value.id != -1) {
+                    if(loadedTable.value.TableID != null) {
                         val data = Intent()
                         data.putExtra("timetable",Gson().toJson(loadedTable.value))
                         setResult(1, data)

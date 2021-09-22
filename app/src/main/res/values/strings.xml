@@ -3,4 +3,5 @@
     <string name="title_activity_launch">LaunchActivity</string>
     <string name="title_activity_account">AccountActivity</string>
     <string name="title_activity_registration">RegistrationActivity</string>
+    <string name="title_activity_add_table">AddTableActivity</string>
 </resources>

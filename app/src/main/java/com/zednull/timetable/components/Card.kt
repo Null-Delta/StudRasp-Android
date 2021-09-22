@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zednull.timetable.minutes
 import com.zednull.timetable.structure.Lesson
+import com.zednull.timetable.structure.LessonTime
 import com.zednull.timetable.ui.theme.TimeTableTheme
 import java.util.*
 
@@ -30,20 +31,20 @@ fun convertToTime(t: Int): String {
     return h + ":" + m
 }
 
-fun getTimeUntilStart(date: Date, lesson: Lesson): String {
+fun getTimeUntilStart(date: Date, lesson: LessonTime): String {
     var h = (lesson.start - date.minutes()) / 60
     var m = (lesson.start - date.minutes()) % 60
     return if(h == 0) "${m}м" else "${h}ч ${m}м"
 }
 
-fun getTimeUntilEnd(date: Date, lesson: Lesson): String {
+fun getTimeUntilEnd(date: Date, lesson: LessonTime): String {
     var h = (lesson.end - date.minutes()) / 60
     var m = (lesson.end - date.minutes()) % 60
     return if(h == 0) "${m}м" else "${h}ч ${m}м"
 }
 
 @Composable
-fun Card(date: Date, lesson: Lesson, state: CardState) {
+fun Card(date: Date, lesson: Lesson, state: CardState, time: LessonTime) {
     Column() {
         Row() {
             Box(
@@ -71,7 +72,7 @@ fun Card(date: Date, lesson: Lesson, state: CardState) {
                 modifier = Modifier.height(24.dp)
             ) {
                 Text(
-                    text = "${convertToTime(lesson.start)} - ${convertToTime(lesson.end)}",
+                    text = "${convertToTime(time.start)} - ${convertToTime(time.end)}",
                     color = MaterialTheme.colors.primary,
                     fontSize = 16.sp,
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
@@ -107,7 +108,7 @@ fun Card(date: Date, lesson: Lesson, state: CardState) {
                         .fillMaxWidth()
                         .weight(1f, true))
                     Text(
-                        text = getTimeUntilStart(date, lesson),
+                        text = getTimeUntilStart(date, time),
                         color = MaterialTheme.colors.secondary,
                         fontSize = 14.sp,
                         fontFamily = MaterialTheme.typography.body1.fontFamily,
@@ -182,7 +183,7 @@ fun Card(date: Date, lesson: Lesson, state: CardState) {
                         .fillMaxWidth()
                         .weight(1f, true))
                     Text(
-                        text = getTimeUntilEnd(date, lesson),
+                        text = getTimeUntilEnd(date, time),
                         color = MaterialTheme.colors.primary,
                         fontSize = 14.sp,
                         fontFamily = MaterialTheme.typography.body1.fontFamily,
@@ -199,6 +200,6 @@ fun Card(date: Date, lesson: Lesson, state: CardState) {
 @Composable
 fun preview() {
     TimeTableTheme() {
-        Card(date = Date(), lesson = Lesson("Дискретка","Жук А.С.","А205","Лк",0,0, LessonNumber = null), state = CardState.active)
+        Card(date = Date(), lesson = Lesson("Дискретка","Жук А.С.","А205","Лк", LessonNumber = null), state = CardState.active, LessonTime(0,0))
     }
 }

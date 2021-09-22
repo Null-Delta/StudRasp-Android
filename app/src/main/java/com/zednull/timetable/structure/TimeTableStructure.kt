@@ -50,7 +50,7 @@ class error(var code: Int, var message: String) {
 
 }
 
-class requestStruct(var error: error, var timetable: requestTable?, var session: String?, var login: String?) {
+class requestStruct(var error: error, var timetable: requestTable?, var session: String?, var login: String?, var email: String?) {
 
 }
 

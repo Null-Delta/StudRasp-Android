@@ -163,7 +163,8 @@ fun Card(date: Date, lesson: Lesson, state: CardState, time: LessonTime) {
                         color = if (state == CardState.active) MaterialTheme.colors.secondary else MaterialTheme.colors.primary,
                         fontSize = 14.sp,
                         fontFamily = MaterialTheme.typography.body1.fontFamily,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.End
                     )
                 }
             }
@@ -200,6 +201,6 @@ fun Card(date: Date, lesson: Lesson, state: CardState, time: LessonTime) {
 @Composable
 fun preview() {
     TimeTableTheme() {
-        Card(date = Date(), lesson = Lesson("Дискретка","Жук А.С.","А205","Лк", LessonNumber = null), state = CardState.active, LessonTime(0,0))
+        Card(date = Date(), lesson = Lesson("Дискретка","анимешка рандомная","дача моргена","гайд по геншину", LessonNumber = null), state = CardState.active, LessonTime(0,0))
     }
 }

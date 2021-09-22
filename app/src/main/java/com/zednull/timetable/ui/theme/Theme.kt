@@ -23,7 +23,8 @@ private val LightColorPalette = lightColors(
         onSecondary = AppEnableLight,
         onPrimary = AppDisableLight,
         primaryVariant = AppChangedGlobal,
-        secondaryVariant = AppChangedGlobalText
+        secondaryVariant = AppChangedGlobalText,
+        onError = AppAlterChangedGlobalText
 )
 
 @Composable

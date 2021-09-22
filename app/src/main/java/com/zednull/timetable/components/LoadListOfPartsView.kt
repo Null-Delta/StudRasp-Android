@@ -5,39 +5,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.Parameters
-import com.github.kittinunf.fuel.httpPost
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.zednull.timetable.components.ui.MyTimeTableState
-import com.zednull.timetable.structure.ServerTimeTable
-import com.zednull.timetable.structure.mainDomain
-import com.zednull.timetable.structure.requestStruct
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
 @Composable
@@ -50,7 +34,7 @@ fun DrawVariant()
             .fillMaxWidth()
             .height(40.dp)
             .background(
-                    MaterialTheme.colors.secondary,
+                MaterialTheme.colors.secondary,
                 MaterialTheme.shapes.medium
             )
             .pointerInput(Unit) {
@@ -252,112 +236,10 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
 @Preview(showBackground = true)
 @Composable
 fun previewLoadListOfPartsView() {
-    var rezult = remember { mutableStateOf("") }
-
-    Column(
-
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState(), true, null, false)
-
-    ) {
-        Row(
-            Modifier
-                .padding(16.dp, 16.dp, 16.dp, 10.dp)
-                .fillMaxWidth()
-        ) {
-            TextButton(
-                onClick = {
-                    //navigation.popBackStack()
-                },
-            ) {
-                Text(
-                    text = "Отмена",
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colors.primary
-                )
-            }
-
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, true)
-            )
-        }
-
-
-        Text(
-            text = "Преподаватели",
-            fontFamily = MaterialTheme.typography.body1.fontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 34.sp,
-            modifier = Modifier
-                .padding(16.dp, 0.dp, 0.dp, 22.dp)
-                .fillMaxWidth(),
-            textAlign = TextAlign.Left,
-            color = MaterialTheme.colors.primary
-        )
-
-
-        repeat(3)
-        {
-            DrawVariant()
-        }
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f, true)
-        )
-
-
-        Row(
-        ) {
-
-            InputEditText(
-                value = rezult.value, onValueChange = {
-                    rezult.value = it.filter { "1234567890".contains(it) }
-                },
-                modifier = Modifier
-                    .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
-                    .fillMaxWidth()
-                    .padding(0.dp, 0.dp, 0.dp, 0.dp),
-                keyboardOptions = KeyboardOptions(
-                    KeyboardCapitalization.None,
-                    false,
-                    KeyboardType.Number,
-                    ImeAction.Default
-                ),
-                maxLines = 1,
-                placeHolderString = "Код"
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-            TextButton(
-                onClick = {
-                    //loadTable.value = rezult.value!!
-                },
-                modifier = Modifier
-                    .padding(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent,
-                    contentColor = MaterialTheme.colors.primary,
-                    disabledBackgroundColor = Color.Transparent,
-                    disabledContentColor = MaterialTheme.colors.onSecondary
-                ),
-            ) {
-                Text(
-                    text = "Вот это",
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-        }
+    TimeTableTheme {
+       // LoadListOfPartsView(navigation = NavH, loadTable = , typeOfPart = )
     }
+}
 
 /*var rezult = remember { mutableStateOf("") }
 

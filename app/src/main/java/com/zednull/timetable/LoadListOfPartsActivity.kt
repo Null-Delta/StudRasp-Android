@@ -25,7 +25,6 @@ import com.zednull.timetable.components.*
 import com.zednull.timetable.components.ui.AccountView
 import com.zednull.timetable.components.ui.MyTimeTableView
 import com.zednull.timetable.components.ui.PartEditorView
-import com.zednull.timetable.structure.ServerTimeTable
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.*
 

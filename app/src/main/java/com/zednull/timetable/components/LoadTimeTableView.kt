@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.core.extensions.jsonBody
@@ -115,7 +114,7 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
 
                     .responseString { request, response, result ->
                         //Log.i("test", result.get())
-                        var request: requestStruct = jacksonObjectMapper().readValue(result.get(),requestStruct::class.java)
+                        var request: requestStruct = Gson().fromJson(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
 
                             errorText.value = request.error.message

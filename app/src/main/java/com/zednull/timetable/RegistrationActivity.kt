@@ -19,7 +19,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.kittinunf.fuel.Fuel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
@@ -117,12 +116,15 @@ fun RegistrationView(activity: RegistrationActivity, isLogining: Boolean) {
                         "login" to login.value,
                         "password" to password.value))
                         .responseString { _, _ , result ->
-                            val request: requestStruct = jacksonObjectMapper().readValue(result.get(),
+                            Log.i("test", result.get())
+                            val request: requestStruct = Gson().fromJson(result.get(),
                                 requestStruct::class.java)
                             if(request.error.code != 0) {
                                 dialogErrorText.value = request.error.message
                                 isErrorShow.value = true
                             } else {
+                                Log.i("test", "finish")
+
                                 val data = Intent()
                                 data.putExtra("login", request.login!!)
                                 data.putExtra("session", request.session!!)
@@ -138,7 +140,7 @@ fun RegistrationView(activity: RegistrationActivity, isLogining: Boolean) {
                         "password" to password.value))
                         .responseString { request, response, result ->
                             Log.i("a",result.get())// response
-                            var request: requestStruct = jacksonObjectMapper().readValue(result.get(),
+                            var request: requestStruct = Gson().fromJson(result.get(),
                                 requestStruct::class.java)
                             if(request.error.code != 0) {
                                 dialogErrorText.value = request.error.message

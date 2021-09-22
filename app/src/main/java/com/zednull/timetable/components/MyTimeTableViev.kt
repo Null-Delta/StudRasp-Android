@@ -6,10 +6,8 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -38,7 +36,10 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import com.zednull.timetable.LoadListOfPartsActivity
+import com.zednull.timetable.R
 
 
 enum class MyTimeTableState {
@@ -50,11 +51,13 @@ enum class MyTimeTableState {
 fun DrawTable(state: MyTimeTableState)
 {
     val isPressed = remember { mutableStateOf(false) }
+    var expan = remember { mutableStateOf(false) }
+
     Row (
         modifier = Modifier
             .padding(16.dp, 0.dp, 16.dp, 9.dp)
             .fillMaxWidth()
-            .height(40.dp)
+            .height(36.dp)
             .background(
                 if (state == MyTimeTableState.global || state == MyTimeTableState.local)
                     MaterialTheme.colors.secondary
@@ -90,7 +93,8 @@ fun DrawTable(state: MyTimeTableState)
                 color = if (state == MyTimeTableState.global || state == MyTimeTableState.local) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant,
                 textAlign = TextAlign.Left,
                 modifier = Modifier
-                    .padding(8.dp, 8.dp, 6.dp, 0.dp)
+                    .padding(8.dp, 0.dp, 8.dp, 0.dp)
+                    .align(Alignment.CenterVertically)
             )
 
         Text(
@@ -99,10 +103,11 @@ fun DrawTable(state: MyTimeTableState)
             fontSize = 16.sp,
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Medium,
-            color =  if (state == MyTimeTableState.global || state == MyTimeTableState.local) MaterialTheme.colors.onSecondary else Color(0xFFD79515),// закончились варианты цветов
+            color =  if (state == MyTimeTableState.global || state == MyTimeTableState.local) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onError,
             textAlign = TextAlign.Left,
             modifier = Modifier
-                .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                .padding(0.dp, 0.dp, 0.dp, 0.dp)
+                .align(Alignment.CenterVertically)
         )
 
         Spacer(
@@ -113,78 +118,89 @@ fun DrawTable(state: MyTimeTableState)
 
         if (state == MyTimeTableState.changed)
         {
-            TextButton(modifier = Modifier
-                .width(30.dp)
-                .padding(0.dp, 0.dp, 0.dp, 0.dp),
-                onClick = {
-                    // в редактор
-                }
-            )
-            {
-                Text(
-                    modifier = Modifier
-                        .width(20.dp)
-                        .padding(0.dp, 0.dp, 0.dp, 0.dp),
-                    text = "V",
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    color = if (state == MyTimeTableState.global || state == MyTimeTableState.local) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant
+            IconButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .width(36.dp)
+                    .height(36.dp)
+                    .background(Color.Transparent, MaterialTheme.shapes.medium)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.upload),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primaryVariant
                 )
             }
         }
 
 
-            var expan = remember { mutableStateOf(false) }
             Box(modifier = Modifier
-                .width(50.dp)
+                .width(36.dp)
+                .height(36.dp)
                 .padding(0.dp, 0.dp, 0.dp, 0.dp),) {
-                /*
-                IconButton(onClick = { expan.value = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Localized description")
-                }
-                 */
-                TextButton(onClick = { expan.value = true }) {
-                    Text(
-                        text = "...",
-                        fontFamily = MaterialTheme.typography.body1.fontFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp,
-                        color = if (state == MyTimeTableState.global || state == MyTimeTableState.local) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant
+
+                IconButton(
+                    onClick = { expan.value = true },
+                    modifier = Modifier
+                        .width(36.dp)
+                        .height(36.dp)
+                        .background(Color.Transparent, MaterialTheme.shapes.medium)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_more_horiz_24),
+                        contentDescription = null,
+                        tint = if (state == MyTimeTableState.global || state == MyTimeTableState.local) MaterialTheme.colors.primary
+                        else MaterialTheme.colors.primaryVariant
                     )
                 }
                 DropdownMenu(
                     modifier = Modifier.background(
-                        if (state == MyTimeTableState.global || state == MyTimeTableState.local)
-                            MaterialTheme.colors.secondary
-                        else
-                            MaterialTheme.colors.secondaryVariant,
+                            MaterialTheme.colors.background,
                         MaterialTheme.shapes.medium
                     ),
                     expanded = expan.value,
                     onDismissRequest = { expan.value = false }
                 ) {
-                    DropdownMenuItem(onClick = { /* Handle refresh! */ }) {
-                        Text("Удалить")
-                    }
                     if (state != MyTimeTableState.global)
-                        DropdownMenuItem(onClick = { /* Handle settings! */ }) {
-                            Text("Опубликовать")
+                        DropdownMenuItem(onClick = {
+                            expan.value = false
+                        }) {
+                            Text(
+                                text = "Опубликовать",
+                                color = MaterialTheme.colors.primary,
+                                fontSize = 16.sp,
+                                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                                )
                     }
-                    DropdownMenuItem(onClick = { /* Handle send feedback! */ }) {
-                        Text("Сделать текущим")
+                    DropdownMenuItem(onClick = {
+                        expan.value = false
+                    }) {
+                        Text(
+                            text = "Сделать текущим",
+                            color = MaterialTheme.colors.primary,
+                            fontSize = 16.sp,
+                            fontFamily = MaterialTheme.typography.body1.fontFamily,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+
+                            )
+                    }
+                    DropdownMenuItem(onClick = {
+                        expan.value = false
+                    }) {
+                        Text(
+                            text = "Удалить",
+                            color = Color.Red,
+                            fontSize = 16.sp,
+                            fontFamily = MaterialTheme.typography.body1.fontFamily,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                        )
                     }
                 }
             }
-/*
-            Text(
-                text = "...",
-                fontFamily = MaterialTheme.typography.body1.fontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = 20.sp,
-                color = if (state == MyTimeTableState.global || state == MyTimeTableState.local) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant
-                )
-*/
     }
 }
 

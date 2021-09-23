@@ -35,7 +35,6 @@ import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.httpPost
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.zednull.timetable.components.ui.MyTimeTableState
-import com.zednull.timetable.structure.ServerTimeTable
 import com.zednull.timetable.structure.mainDomain
 import com.zednull.timetable.structure.requestStruct
 import com.zednull.timetable.ui.theme.TimeTableTheme

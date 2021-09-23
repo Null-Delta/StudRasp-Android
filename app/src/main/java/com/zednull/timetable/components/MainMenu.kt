@@ -65,6 +65,10 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
         )
     }
 
+    LaunchedEffect(key1 = savedTimeTable) {
+
+    }
+
     Scaffold(
         bottomBar = { bottomBar(navController = navController, menu = menu) }
     ) {
@@ -79,7 +83,8 @@ fun Navigation(navController: NavHostController, date: Date, table: MutableState
     NavHost(navController, startDestination = "home") {
         composable("home") {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(paddingValues = paddingValues)
             ) {
                 TimeTableView(date, table, day, paddingValues)
@@ -116,15 +121,17 @@ fun bottomBar(navController: NavController, menu: MutableState<Int>) {
                 alwaysShowLabel = false,
                 selected = menu.value == 0,
                 onClick = {
-                    menu.value = 0
-                    navController.navigate("home") {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
+                    if(menu.value != 0) {
+                        menu.value = 0
+                        navController.navigate("home") {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             )
@@ -136,16 +143,18 @@ fun bottomBar(navController: NavController, menu: MutableState<Int>) {
                 alwaysShowLabel = false,
                 selected = menu.value == 1,
                 onClick = {
-                    menu.value = 1
-                    navController.navigate("settings")
-                    {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
+                    if (menu.value != 1) {
+                        menu.value = 1
+                        navController.navigate("settings")
+                        {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             )

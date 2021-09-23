@@ -41,7 +41,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
 
     val pagerState = rememberPagerState(
         pageCount = 7,
-        selectedDay.value,0f,2,false
+        selectedDay.value,0f,7,false
     )
 
     val loadRequest = rememberLauncherForActivityResult(
@@ -54,7 +54,9 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                 editor.putString("timetable", result.data!!.getStringExtra("timetable"))
                 editor.apply()
 
+
                 timeTable.value = Gson().fromJson(result.data!!.getStringExtra("timetable"), TimeTableStructure::class.java)
+                Log.i("test", (timeTable.value.lessonsTime).toString())
             }
         }
     }
@@ -127,6 +129,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState(), true, null, false)
+                        .fillMaxSize()
                         .padding(16.dp, 0.dp, 16.dp, 76.dp)
                 ) {
                     Row(
@@ -173,7 +176,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                             date = date,
                             lesson = timeTable.value.days[page].getLessons(Date(), 0)[it],
                             state = cardState(date, timeTable, page, it),
-                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(), 0)[it].LessonNumber!!]
+                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(), 0)[it].lessonNumber - 1]
                         )
                         if (it != 15) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -224,7 +227,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                             date = date,
                             lesson = timeTable.value.days[page].getLessons(Date(), 1)[it],
                             state = CardState.highlight,
-                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),1)[it].LessonNumber!!]
+                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),1)[it].lessonNumber - 1]
                         )
                         if (it != 15) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -239,10 +242,10 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
 
 fun cardState(date: Date, timeTable: MutableState<TimeTableStructure>, page: Int, lesson: Int): CardState {
     return if(date.weekDayNum() - 1 != page) CardState.highlight
-    else if(date.minutes() < timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].LessonNumber!!].start &&
-        (lesson == 0 || date.minutes() > timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson - 1].LessonNumber!!].end)) CardState.wait
-    else if (date.minutes() >= timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].LessonNumber!!].start &&
-        date.minutes() <= timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].LessonNumber!!].end) CardState.active
+    else if(date.minutes() < timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].lessonNumber].start &&
+        (lesson == 0 || date.minutes() > timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson - 1].lessonNumber].end)) CardState.wait
+    else if (date.minutes() >= timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].lessonNumber].start &&
+        date.minutes() <= timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),0)[lesson].lessonNumber].end) CardState.active
     else CardState.highlight
 }
 

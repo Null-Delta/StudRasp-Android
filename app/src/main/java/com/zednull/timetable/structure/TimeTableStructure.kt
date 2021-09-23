@@ -5,7 +5,7 @@ import com.zednull.timetable.weekIndex
 import java.util.*
 
 
-class Lesson(var name: String, var teacherName: String, var audience: String, var type: String, var LessonNumber: Int?) {
+class Lesson(var name: String, var teacherName: String, var audience: String, var type: String, var lessonNumber: Int) {
 
 }
 

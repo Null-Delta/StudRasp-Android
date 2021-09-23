@@ -121,15 +121,17 @@ fun bottomBar(navController: NavController, menu: MutableState<Int>) {
                 alwaysShowLabel = false,
                 selected = menu.value == 0,
                 onClick = {
-                    menu.value = 0
-                    navController.navigate("home") {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
+                    if(menu.value != 0) {
+                        menu.value = 0
+                        navController.navigate("home") {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             )
@@ -141,16 +143,18 @@ fun bottomBar(navController: NavController, menu: MutableState<Int>) {
                 alwaysShowLabel = false,
                 selected = menu.value == 1,
                 onClick = {
-                    menu.value = 1
-                    navController.navigate("settings")
-                    {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
+                    if (menu.value != 1) {
+                        menu.value = 1
+                        navController.navigate("settings")
+                        {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             )

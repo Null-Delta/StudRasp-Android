@@ -113,13 +113,14 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
                     //.jsonBody("{ \"action\" : \"get_timetable\", \"id\" : \"${code.value}\" }")
 
                     .responseString { request, response, result ->
-                        //Log.i("test", result.get())
                         var request: requestStruct = Gson().fromJson(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
 
                             errorText.value = request.error.message
                             isErrorShow.value = true
                         } else {
+                            Log.i("test", result.get())
+
                             loadTable.value = request.timetable!!.json!!
                             loadTable.value.TableID = request.timetable!!.id
                         }

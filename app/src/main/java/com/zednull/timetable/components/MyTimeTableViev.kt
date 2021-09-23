@@ -105,7 +105,7 @@ class savedTimeTableInfo(var id: Int, var loaded: TimeTableStructure, var table:
 }
 
 @Composable
-fun DrawTable(state: MyTimeTableState, name: String, code: String, onShare: () -> (Unit) = {}, onDelete: () -> (Unit) = {})
+fun DrawTable(state: MyTimeTableState, name: String, code: String, onShare: () -> (Unit) = {}, onDelete: () -> (Unit) = {}, onTap: () -> (Unit) = {})
 {
     var context = LocalContext.current
     val isPressed = remember { mutableStateOf(false) }
@@ -132,8 +132,7 @@ fun DrawTable(state: MyTimeTableState, name: String, code: String, onShare: () -
                         val pressEndTime = System.currentTimeMillis()
                         val totalPressTime = pressEndTime - pressStartTime
                         if (totalPressTime < 200) {
-                            //переход к расписанию
-                            Log.i("ss", "click!")
+                            onTap()
                         }
                         isPressed.value = false
                     },
@@ -368,7 +367,6 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
 
             modifier = Modifier
                 .fillMaxSize()
-            //.verticalScroll(rememberScrollState(), true, null, false)
 
         ) {
             item {
@@ -384,7 +382,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                     color = MaterialTheme.colors.primary
                 )
             }
-            
+
             items(tables.value.globalTables) {item ->
                 DrawTable(
                     state = MyTimeTableState.global,
@@ -430,7 +428,8 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
             }
 
             items(tables.value.localTables) { it ->
-                DrawTable(state = MyTimeTableState.local, name = it.name, code = "", {
+                DrawTable(state = MyTimeTableState.local, name = it.name, code = "",
+                    onShare = {
                     Fuel.post(
                         "https://$mainDomain/main.php",
                         listOf(
@@ -458,8 +457,18 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                             Log.i("test", "error")
                         }
                     }
-                }, {
-                    tables.value.localTables.remove(it)
+                },
+                    onDelete = {
+                        tables.value.localTables.remove(it)
+                },
+                    onTap = {
+                        tables.value.selectedID = -1
+                        tables.value.selectedType = MyTimeTableState.local
+                        tables.value.selectedTable = tables.value.localTables.indexOfFirst {value ->
+                            value == it
+                        }
+
+                        navigation.navigate("editor")
                 })
             }
         }

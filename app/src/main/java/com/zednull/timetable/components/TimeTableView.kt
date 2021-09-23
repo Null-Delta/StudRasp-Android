@@ -41,7 +41,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
 
     val pagerState = rememberPagerState(
         pageCount = 7,
-        selectedDay.value,0f,2,false
+        selectedDay.value,0f,7,false
     )
 
     val loadRequest = rememberLauncherForActivityResult(
@@ -127,6 +127,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState(), true, null, false)
+                        .fillMaxSize()
                         .padding(16.dp, 0.dp, 16.dp, 76.dp)
                 ) {
                     Row(

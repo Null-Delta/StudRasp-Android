@@ -1,5 +1,6 @@
 package com.zednull.timetable.structure
 
+import com.zednull.timetable.components.ui.globalTablesInfo
 import com.zednull.timetable.weekIndex
 import java.util.*
 
@@ -50,9 +51,16 @@ class error(var code: Int, var message: String) {
 
 }
 
-class requestStruct(var error: error, var timetable: requestTable?, var session: String?, var login: String?, var email: String?) {
-
-}
+class requestStruct(
+    var error: error,
+    var timetable: requestTable?,
+    var session: String?,
+    var login: String?,
+    var email: String?,
+    var timeTables: MutableList<globalTablesInfo>?,
+    var id: String?,
+    var invite_code: String?
+    )
 
 class requestTable(var id: Int, var json: TimeTableStructure?) {
 

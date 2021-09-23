@@ -65,6 +65,10 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
         )
     }
 
+    LaunchedEffect(key1 = savedTimeTable) {
+
+    }
+
     Scaffold(
         bottomBar = { bottomBar(navController = navController, menu = menu) }
     ) {
@@ -79,7 +83,8 @@ fun Navigation(navController: NavHostController, date: Date, table: MutableState
     NavHost(navController, startDestination = "home") {
         composable("home") {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(paddingValues = paddingValues)
             ) {
                 TimeTableView(date, table, day, paddingValues)

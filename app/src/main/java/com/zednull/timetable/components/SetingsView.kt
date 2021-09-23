@@ -1,5 +1,6 @@
 package com.zednull.timetable.components
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -9,7 +10,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,17 +29,18 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zednull.timetable.AccountActivity
 import com.zednull.timetable.R
-import com.zednull.timetable.components.ui.AccountView
-import com.zednull.timetable.components.ui.MyTimeTableView
-import com.zednull.timetable.components.ui.PartEditorView
+import com.zednull.timetable.components.ui.*
+import com.zednull.timetable.structure.TimeTableStructure
+import com.zednull.timetable.structure.emptyTimeTable
+import com.zednull.timetable.structure.user
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
 @Composable
 fun SettingsView(navController: NavController) {
-
-    var context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,6 +121,44 @@ fun SettingsView(navController: NavController) {
 fun SettingsNavigation(paddingValues: PaddingValues) {
     val navController = rememberNavController()
 
+    var context = LocalContext.current
+
+    val user = remember { mutableStateOf(
+        Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE).getString("user", Gson().toJson(
+            user("", "")
+        )), com.zednull.timetable.structure.user::class.java)
+    ) }
+
+    var tables = remember { mutableStateOf( SavedTables (
+        ( Gson().fromJson(
+            context.getSharedPreferences(
+                "preferences",
+                Context.MODE_PRIVATE
+            ).getString(
+                "globalTables",
+                Gson().toJson(List(0) { globalTablesInfo("", "", "") })
+            ), object : TypeToken<SnapshotStateList<globalTablesInfo>>() { }.type
+        )),
+        ( Gson().fromJson(
+            context.getSharedPreferences(
+                "preferences",
+                Context.MODE_PRIVATE
+            ).getString(
+                "localTables",
+                Gson().toJson(List(0) { emptyTimeTable })
+            ), object : TypeToken<SnapshotStateList<TimeTableStructure>>() { }.type
+        )),
+        (Gson().fromJson(
+            context.getSharedPreferences(
+                "preferences",
+                Context.MODE_PRIVATE
+            ).getString(
+                "globalSaved",
+                Gson().toJson(List(0) { savedTimeTableInfo(-1, emptyTimeTable, emptyTimeTable) })
+            ), object : TypeToken<SnapshotStateList<savedTimeTableInfo>>() { }.type
+        )
+    )) ) }
+
     NavHost(
         navController,
         startDestination = "settings",
@@ -128,10 +169,14 @@ fun SettingsNavigation(paddingValues: PaddingValues) {
         }
 
         composable("account") {
-            AccountView(navController)
+            AccountView(navController, user)
         }
         composable("myTimeTable") {
-            MyTimeTableView(navController)
+            MyTimeTableView(navController, user, tables)
+        }
+
+        composable("editor") {
+            EditorView(tables)
         }
 
     }

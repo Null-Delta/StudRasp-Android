@@ -9,10 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +26,7 @@ import com.zednull.timetable.structure.user
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
 @Composable
-fun AccountView(navigation: NavHostController) {
+fun AccountView(navigation: NavHostController, user: MutableState<user>) {
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
@@ -45,12 +42,6 @@ fun AccountView(navigation: NavHostController) {
 
     val context = LocalContext.current
 
-
-    val user = remember { mutableStateOf(
-        Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE).getString("user", Gson().toJson(
-            user("", "")
-        )), user::class.java)
-    ) }
 
     val registration = rememberLauncherForActivityResult(contract =
     ActivityResultContracts.StartActivityForResult()

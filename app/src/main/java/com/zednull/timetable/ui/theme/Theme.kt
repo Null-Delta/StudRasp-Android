@@ -13,7 +13,9 @@ private val DarkColorPalette = darkColors(
         onSecondary = AppEnableLightDark,
         onPrimary = AppDisableLightDark,
         primaryVariant = AppChangedGlobal,
-        secondaryVariant = AppChangedGlobalText
+        secondaryVariant = AppChangedGlobalText,
+        onError = AppAlterChangedGlobalText
+
 )
 
 private val LightColorPalette = lightColors(

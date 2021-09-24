@@ -66,6 +66,6 @@ class requestTable(var id: Int, var json: TimeTableStructure?) {
 
 }
 
-class user(var login: String, var session: String) {
+class user(var login: String, var session: String, var email: String) {
 
 }

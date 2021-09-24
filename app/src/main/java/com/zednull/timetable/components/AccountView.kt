@@ -47,7 +47,7 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
     ActivityResultContracts.StartActivityForResult()
         , onResult ={
             if(it.resultCode == 10) {
-                user.value = user(it.data!!.getStringExtra("login")!!, it.data!!.getStringExtra("session")!!)
+                user.value = user(it.data!!.getStringExtra("login")!!, it.data!!.getStringExtra("session")!!, it.data!!.getStringExtra("email")!!)
                 val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
                 editor.putString("user", Gson().toJson(user.value))
                 editor.apply()
@@ -94,7 +94,7 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
                 TextButton(
                     onClick = {
                         isExitDislog.value = false
-                        user.value = user("","")
+                        user.value = user("","", "")
                         val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
                         editor.putString("user", Gson().toJson(user.value))
                         editor.apply()
@@ -232,6 +232,26 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
             ) {
                 Text(
                     text = "Мои расписания",
+                    fontSize = 14.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colors.primary,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            TextButton(onClick = {
+                navigation.navigate("emailAdd" )
+            },
+                modifier = Modifier
+                    .padding(16.dp,16.dp,16.dp,32.dp)
+                    .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
+                    .fillMaxWidth()
+                    .height(42.dp)
+            ) {
+                Text(
+                    text = "Почта",
                     fontSize = 14.sp,
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
                     fontWeight = FontWeight.Medium,

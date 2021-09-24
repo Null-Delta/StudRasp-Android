@@ -47,18 +47,20 @@ class LoadListOfPartsActivity : ComponentActivity() {
                 val nameRoom = remember { mutableStateOf("") }
                 val nameType = remember { mutableStateOf("") }
 
-
-                //val typeOfParts = getIntent().getIntExtra("type", 0)
                 LaunchedEffect(key1 = paraIsReady.value) {
                     if (paraIsReady.value == "close")
                     {
                         finish()
                     }
-                    else if(paraIsReady.value != "") {
+                    else if(paraIsReady.value == "add") {
                         val data = Intent()
-                        data.putExtra("name", paraIsReady.value)
+                        data.putExtra("para", Gson().toJson(arrayListOf(nameDisp, namePrep, nameRoom, nameType)))
                         setResult(1, data)
                         finish()
+                    }
+                    else
+                    {
+                        Log.e("LoadListOfPartsActivity","Unknown return")
                     }
                 }
 

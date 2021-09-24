@@ -43,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import com.github.kittinunf.fuel.Fuel
 import com.google.gson.reflect.TypeToken
 import com.zednull.timetable.LoadListOfPartsActivity
+import com.zednull.timetable.LoadTimeTableActivity
 import com.zednull.timetable.R
 import com.zednull.timetable.structure.*
 import java.util.stream.Collectors.toList
@@ -289,17 +290,18 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
             }
         }
     }
-
+    ///////////////////
         // временное решение
-    val testname = remember { mutableStateOf("") }
+    val testname = remember { mutableStateOf("Тест кнопка") }
 
     val loadRequest = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result != null && result.data != null) {
-            testname.value = "" + result.data!!.getStringExtra("name")
+            testname.value = "" + result.data!!.getStringExtra("para")
         }
     }
+    ////////////////////////
 
     Column(
         modifier = Modifier
@@ -310,6 +312,19 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                 .padding(16.dp, 16.dp, 16.dp, 13.dp)
                 .fillMaxWidth()
         ) {
+            TextButton(
+                onClick = {
+                    loadRequest.launch(Intent(context, LoadListOfPartsActivity::class.java))
+                },
+            ) {
+                Text(
+                    text = testname.value, // временное решение
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colors.primary
+                )
+            }
             TextButton(
                 onClick = {
                     navigation.popBackStack()

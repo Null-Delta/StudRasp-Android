@@ -1,7 +1,7 @@
 package com.zednull.timetable.components.ui
 
 import android.content.Context
-import android.text.format.Time
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -21,13 +21,38 @@ import androidx.navigation.compose.rememberNavController
 import com.github.kittinunf.fuel.Fuel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
-import com.zednull.timetable.minutes
 import com.zednull.timetable.structure.mainDomain
 import com.zednull.timetable.structure.requestStruct
 import com.zednull.timetable.structure.user
 import com.zednull.timetable.ui.theme.TimeTableTheme
+import kotlinx.coroutines.delay
 import java.util.*
-import java.util.Date
+
+
+fun printDifference(startDate: Date, endDate: Date): Int {
+    //milliseconds
+    var different = endDate.time - startDate.time
+    println("startDate : $startDate")
+    println("endDate : $endDate")
+    println("different : $different")
+    val secondsInMilli: Long = 1000
+    val minutesInMilli = secondsInMilli * 60
+    val hoursInMilli = minutesInMilli * 60
+    val daysInMilli = hoursInMilli * 24
+    val elapsedDays = different / daysInMilli
+    different = different % daysInMilli
+    val elapsedHours = different / hoursInMilli
+    different = different % hoursInMilli
+    val elapsedMinutes = different / minutesInMilli
+    different = different % minutesInMilli
+    val elapsedSeconds = different / secondsInMilli
+    if (elapsedDays != 0.toLong() || elapsedHours != 0.toLong() || elapsedMinutes != 0.toLong())
+        return 60
+    else
+        return elapsedSeconds.toInt()
+}
+
+
 
 @Composable
 fun EmailAddView(navigation: NavHostController, user: MutableState<user>) {
@@ -35,14 +60,13 @@ fun EmailAddView(navigation: NavHostController, user: MutableState<user>) {
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
 
-
+    val context = LocalContext.current
     var isAccepted = remember { mutableStateOf(0)}
     Fuel.post("https://$mainDomain/main.php", listOf(
         "action" to "check_account_confirmation",
         "login" to user.value.login,
         "session" to user.value.session))
         .responseString { request, response, result ->
-            Log.i("a",result.get())// response
             var request: requestStruct = Gson().fromJson(result.get(),
                 requestStruct::class.java)
             if (request.error.code == 10)
@@ -68,6 +92,9 @@ fun EmailAddView(navigation: NavHostController, user: MutableState<user>) {
             barColor,useDarkIcons
         )
     }
+
+
+
 
     Column(
         modifier = Modifier
@@ -145,19 +172,27 @@ fun EmailAddView(navigation: NavHostController, user: MutableState<user>) {
                 textAlign = TextAlign.Left,
                 color = MaterialTheme.colors.primary
             )
-                /////////////////////////
-            var addedTime = remember { mutableStateOf(false)};
-            var timer = remember { mutableStateOf(0)};
-            val runnerTime =remember { mutableStateOf(0)};
-            if (addedTime.value)
-            {
-                if (runnerTime.value != Date().getSeconds())
+
+            var timer = remember { mutableStateOf(-1)};
+
+            LaunchedEffect(key1 = timer.value) {
+                if (timer.value == -1 && Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
+                        .getString("timeToSend", ""), Date()::class.java) != null)
                 {
-                    runnerTime.value = Date().getSeconds()
-                    timer.value -=1
+                    timer.value = 60 -
+                        printDifference(Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
+                            .getString("timeToSend", ""), Date()::class.java), Date())
+                }
+                else if (timer.value > 0) {
+                    delay(1000)
+                    timer.value--
+                }
+                else
+                {
+                    timer.value = 0;
                 }
             }
-//////////////////////////////////
+
             TextButton(
                 onClick = {
 
@@ -170,11 +205,12 @@ fun EmailAddView(navigation: NavHostController, user: MutableState<user>) {
                             var request: requestStruct = Gson().fromJson(result.get(),
                                 requestStruct::class.java)
                             if (request.error.code == 0)
-                            {////////////////////////////
-                                addedTime.value = true
-                                timer.value+=60
-                                runnerTime.value = Date().getSeconds();
-                            }//////////////////////////
+                            {
+                                timer.value = 60
+                                var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                                editor.putString("timeToSend", Gson().toJson(Date()))
+                                editor.apply()
+                            }
                             else
                             {
                                 //error
@@ -185,7 +221,8 @@ fun EmailAddView(navigation: NavHostController, user: MutableState<user>) {
                 modifier = Modifier
                     .padding(16.dp, 0.dp, 16.dp, 16.dp)
                     .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
+                    .align(Alignment.CenterHorizontally),
+                enabled = timer.value == 0
                     //.background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
             ) {
                 Text(

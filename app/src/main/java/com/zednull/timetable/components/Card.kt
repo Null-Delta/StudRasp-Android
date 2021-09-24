@@ -21,7 +21,7 @@ import com.zednull.timetable.ui.theme.TimeTableTheme
 import java.util.*
 
 enum class CardState {
-    active, wait, highlight
+    active, wait, highlight, select
 }
 
 fun convertToTime(t: Int): String {

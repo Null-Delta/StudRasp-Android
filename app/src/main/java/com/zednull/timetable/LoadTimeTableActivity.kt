@@ -7,16 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.zednull.timetable.components.LoadTimeTableView
 import com.zednull.timetable.structure.TimeTableStructure
 import com.zednull.timetable.ui.theme.TimeTableTheme
 import com.google.gson.Gson
+import com.zednull.timetable.structure.Day
+import com.zednull.timetable.structure.Lesson
 import com.zednull.timetable.structure.LessonTime
 
 class LoadTimeTableActivity : ComponentActivity() {
@@ -26,7 +25,9 @@ class LoadTimeTableActivity : ComponentActivity() {
         setContent {
             TimeTableTheme {
                 var loadedTable = remember {
-                    mutableStateOf( TimeTableStructure("","","", listOf(), listOf(
+                    mutableStateOf( TimeTableStructure("","","",
+                        listOf<Day>().toMutableStateList(),
+                        listOf(
                         LessonTime(0,0),
                         LessonTime(0,0),
                         LessonTime(0,0),
@@ -34,7 +35,7 @@ class LoadTimeTableActivity : ComponentActivity() {
                         LessonTime(0,0),
                         LessonTime(0,0),
                         LessonTime(0,0)
-                    )))
+                    ).toMutableStateList()))
                 }
 
                 LaunchedEffect(key1 = loadedTable.value) {

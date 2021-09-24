@@ -1,6 +1,8 @@
 package com.zednull.timetable.components.ui
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.SharedPreferences
 import android.text.format.Time
@@ -66,6 +68,20 @@ class SavedTables(
         } != null
     }
 
+    fun selectedTable(): TimeTableStructure {
+        if(selectedType == MyTimeTableState.local) {
+            return localTables[selectedTable]
+        } else {
+            return globalSavedTables.first {
+                it.id == selectedID
+            }.table
+        }
+    }
+
+    fun modificateSelectedTable(action: (TimeTableStructure) -> (Unit)) {
+        action(selectedTable())
+    }
+
     fun saveArray(state: MyTimeTableState, context: Context) {
         if(state == MyTimeTableState.local) {
             var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
@@ -100,14 +116,20 @@ class globalTablesInfo(var name: String, var id: String, var invite_code: String
 
 class savedTimeTableInfo(var id: Int, var loaded: TimeTableStructure, var table: TimeTableStructure) {
     fun isChange(): Boolean {
-        return loaded != table
+        return !loaded.isEqual(table)
     }
 }
 
 @Composable
-fun DrawTable(state: MyTimeTableState, name: String, code: String, onShare: () -> (Unit) = {}, onDelete: () -> (Unit) = {}, onTap: () -> (Unit) = {})
+fun DrawTable(
+    state: MyTimeTableState,
+    name: String,
+    code: String,
+    onShare: () -> (Unit) = {},
+    onDelete: () -> (Unit) = {},
+    onTap: () -> (Unit) = {},
+    onChangesDelete: () -> (Unit) = {})
 {
-    var context = LocalContext.current
     val isPressed = remember { mutableStateOf(false) }
     var expan = remember { mutableStateOf(false) }
 
@@ -176,7 +198,9 @@ fun DrawTable(state: MyTimeTableState, name: String, code: String, onShare: () -
         if (state == MyTimeTableState.changed)
         {
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          onShare()
+                },
                 modifier = Modifier
                     .width(36.dp)
                     .height(36.dp)
@@ -232,6 +256,38 @@ fun DrawTable(state: MyTimeTableState, name: String, code: String, onShare: () -
                                 textAlign = TextAlign.Center,
                                 )
                     }
+
+                    if(state == MyTimeTableState.global) {
+                        DropdownMenuItem(onClick = {
+                            //onChangesDelete()
+                            expan.value = false
+                        }) {
+                            Text(
+                                text = "Скопировать ссылку",
+                                color = MaterialTheme.colors.primary,
+                                fontSize = 16.sp,
+                                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+
+                    if(state == MyTimeTableState.changed) {
+                        DropdownMenuItem(onClick = {
+                            onChangesDelete()
+                            expan.value = false
+                        }) {
+                            Text(
+                                text = "Удалить изменения",
+                                color = Color.Red,
+                                fontSize = 16.sp,
+                                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
                     DropdownMenuItem(onClick = {
                         onDelete()
                         expan.value = false
@@ -250,6 +306,17 @@ fun DrawTable(state: MyTimeTableState, name: String, code: String, onShare: () -
     }
 }
 
+fun Context.getActivity(): Activity? {
+    var currentContext = this
+    while (currentContext is ContextWrapper) {
+        if (currentContext is Activity) {
+            return currentContext
+        }
+        currentContext = currentContext.baseContext
+    }
+    return null
+}
+
 @Composable
 fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tables: MutableState<SavedTables>) {
     val systemController = rememberSystemUiController()
@@ -257,6 +324,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
     val barColor = MaterialTheme.colors.background
 
     var context = LocalContext.current
+    var activity =  remember { context.getActivity() }
     var wasLoad = remember { mutableStateOf(false)}
 
     SideEffect {
@@ -385,10 +453,38 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
 
             items(tables.value.globalTables) {item ->
                 DrawTable(
-                    state = MyTimeTableState.global,
+                    state = if(tables.value.isLoad(item.id) && tables.value.globalSavedTables.first {
+                        it.id == item.id.toInt()
+                        }.isChange()
+                    ) MyTimeTableState.changed else MyTimeTableState.global,
                     name = item.name,
                     code = item.invite_code!!,
-                    {},
+                    {
+                        Fuel.post(
+                            "https://$mainDomain/main.php",
+                            listOf(
+                                "action" to "update_timetable",
+                                "login" to user.value.login,
+                                "session" to user.value.session,
+                                "id" to item.id,
+                                "json" to Gson().toJson(tables.value.globalSavedTables.first {
+                                    it.id == item.id.toInt()
+                                }.table)
+                            )
+                        ).responseString{_,_,result ->
+                            var request = Gson().fromJson(result.get(), requestStruct::class.java)
+
+                            if(request.error.code == 0) {
+                                item.name = tables.value.globalSavedTables.first {
+                                    it.id == item.id.toInt()
+                                }.table.name
+
+                                tables.value.globalSavedTables.removeAll {
+                                    it.id == item.id.toInt()
+                                }
+                            }
+                        }
+                    },
                     {
                         Fuel.post(
                             "https://$mainDomain/main.php",
@@ -409,6 +505,63 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                                 tables.value.clearSaved(context)
                                 tables.value.saveArray(MyTimeTableState.global, context)
                             }
+                        }
+                    }, {
+                        if(tables.value.isLoad(item.id) && tables.value.globalSavedTables.first {
+                            it.id == item.id.toInt()
+                            }.isChange()) {
+                            tables.value.selectedType = MyTimeTableState.global
+                            tables.value.selectedID = item.id.toInt()
+                            tables.value.selectedTable = tables.value.globalTables.indexOfFirst {
+                                it.id == item.id
+                            }
+
+                            navigation.navigate("editor")
+
+                        } else {
+                            Fuel.post(
+                                "https://$mainDomain/main.php",
+                                listOf(
+                                    "action" to "get_timetable",
+                                    "id" to item.id
+                                )
+                            ). responseString{_,_,result ->
+                                var request = Gson().fromJson(result.get(), requestStruct::class.java)
+                                if(request.error.code == 0) {
+
+                                    var loadTable = request.timetable!!.json!!
+                                    loadTable.TableID = request.timetable!!.id
+                                    var secondTable = Gson().fromJson(result.get(), requestStruct::class.java).timetable!!.json!!
+
+                                    secondTable.TableID = loadTable.TableID
+
+                                    tables.value.globalSavedTables.removeAll {
+                                        it.id == item.id.toInt()
+                                    }
+                                    tables.value.globalSavedTables.add(
+                                        savedTimeTableInfo(
+                                            loadTable.TableID!!,
+                                            loadTable,
+                                            secondTable
+                                        )
+                                    )
+
+                                    tables.value.saveArray(MyTimeTableState.global, context)
+
+                                    tables.value.selectedType = MyTimeTableState.global
+                                    tables.value.selectedID = item.id.toInt()
+                                    tables.value.selectedTable = tables.value.globalTables.indexOfFirst {
+                                        it.id == item.id
+                                    }
+                                    activity!!.runOnUiThread {
+                                        navigation.navigate("editor")
+                                    }
+                                }
+                            }
+                        }
+                    }, {
+                        tables.value.globalSavedTables.removeAll {
+                            it.id == item.id.toInt()
                         }
                     })
             }

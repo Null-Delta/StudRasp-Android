@@ -167,18 +167,15 @@ fun SettingsNavigation(paddingValues: PaddingValues) {
         composable("settings") {
             SettingsView(navController)
         }
-
         composable("account") {
             AccountView(navController, user)
         }
         composable("myTimeTable") {
             MyTimeTableView(navController, user, tables)
         }
-
         composable("editor") {
-            EditorView(tables)
+            EditorView(navController, tables)
         }
-
     }
 }
 

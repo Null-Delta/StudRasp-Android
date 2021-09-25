@@ -51,7 +51,13 @@ import com.zednull.timetable.components.bottomBar
 
 
 @Composable
-fun PartEditorView(navigation: NavController, loadTable: MutableState<String>, dist: MutableState<String>, prep: MutableState<String>, room: MutableState<String>, typ: MutableState<String>) {
+fun PartEditorView(
+    navigation: NavController,
+    loadTable: MutableState<String>,
+    dist: MutableState<String>,
+    prep: MutableState<String>,
+    room: MutableState<String>,
+    typ: MutableState<String>) {
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
@@ -101,6 +107,20 @@ fun PartEditorView(navigation: NavController, loadTable: MutableState<String>, d
                     .weight(1f, true)
             )
 
+            TextButton(
+                onClick = {
+                    loadTable.value = "add"!!
+                },
+                enabled = (dist.value != "" && prep.value != "" && room.value != "" && typ.value != "")
+            ) {
+                Text(
+                    text = "Добавить",
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colors.primary
+                )
+            }
         }
 
         Text(

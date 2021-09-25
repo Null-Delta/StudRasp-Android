@@ -66,7 +66,7 @@ fun SettingsView(navController: NavController) {
         )
 
         Text(
-            text = "v0.9.6 (beta)",
+            text = "v0.9.61 (beta)",
             fontSize = 16.sp,
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Bold,
@@ -125,7 +125,7 @@ fun SettingsNavigation(paddingValues: PaddingValues) {
 
     val user = remember { mutableStateOf(
         Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE).getString("user", Gson().toJson(
-            user("", "")
+            user("", "", "")
         )), com.zednull.timetable.structure.user::class.java)
     ) }
 
@@ -167,15 +167,20 @@ fun SettingsNavigation(paddingValues: PaddingValues) {
         composable("settings") {
             SettingsView(navController)
         }
+
         composable("account") {
             AccountView(navController, user)
         }
         composable("myTimeTable") {
             MyTimeTableView(navController, user, tables)
         }
-        composable("editor") {
-            EditorView(navController, tables)
+        composable("emailAdd") {
+            EmailAddView(navController, user)
         }
+        composable("editor") {
+            EditorView(tables)
+        }
+
     }
 }
 

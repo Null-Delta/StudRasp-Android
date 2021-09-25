@@ -69,7 +69,7 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
     LaunchedEffect(selectedDay.value) {
         pagerState.animateScrollToPage(selectedDay.value)
     }
-
+    timeTable.value.name = ""
     Column(
         modifier = Modifier
             .padding(paddingValues)
@@ -110,7 +110,11 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                 ),
             ) {
                 Text(
-                    text = if(timeTable.value.name == "") "Выбрать" else timeTable.value.name,
+
+                    text = if ( timeTable.value.name != "")
+                        timeTable.value.name
+                    else
+                        "Выбрать",
                     fontSize = 20.sp,
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
                     fontWeight = FontWeight.Medium,

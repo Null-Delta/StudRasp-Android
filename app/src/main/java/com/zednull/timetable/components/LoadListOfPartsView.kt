@@ -1,31 +1,123 @@
 package com.zednull.timetable.components
 
-import android.util.Log
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.gson.Gson
 import com.zednull.timetable.ui.theme.TimeTableTheme
 
+
+
+
+
 @Composable
-fun DrawVariant()
+fun PartInput(
+    isPressed: MutableState<Boolean>,
+    arrayOfParts: MutableState<MutableList<String>>,
+    context: Context,
+    typeOfPart: Int
+)
+{
+    val inText = remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = { !(isPressed.value) },
+        title = {
+            Text(
+                text = "Новая запись",
+                fontSize = 20.sp,
+                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colors.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(0.dp, 16.dp, 0.dp, 16.dp)
+                    .fillMaxWidth()
+        ) },
+        text = {
+            TextField(
+                value = inText.value,
+                onValueChange = {
+                    inText.value = it
+                },
+                label = { Text("Введите название") }
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    // добавление нового элемента в память
+                    arrayOfParts.value.add(inText.value)
+                    var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                    editor.putString("partsNum" + typeOfPart.toString(), Gson().toJson(arrayOfParts.value))
+                    editor.apply()
+                    isPressed.value = false
+                },
+                        modifier = Modifier
+                            .background(MaterialTheme.colors.secondary, RectangleShape)
+                            .padding(0.dp, 8.dp, 0.dp, 8.dp)
+                            .width(146.dp),
+
+                enabled = inText.value != "",
+
+            ) {
+                Text("Добавить", color = MaterialTheme.colors.onBackground,
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    isPressed.value = false
+                },
+                modifier = Modifier
+                    .background(MaterialTheme.colors.secondary, RectangleShape)
+                    .padding(0.dp, 8.dp, 0.dp, 8.dp)
+                    .width(146.dp)
+            ) {
+                Text("Отмена", color = MaterialTheme.colors.onBackground,
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        },
+    )
+
+}
+
+@Composable
+fun DrawVariant(
+    namePart: String,
+    loadTable: MutableState<String>,
+    navigation: NavHostController,
+    arrayOfParts: MutableState<MutableList<String>>,
+    context: Context,
+    typeOfPart: Int
+)
 {
     val isPressed = remember { mutableStateOf(false) }
     Row (
@@ -47,7 +139,8 @@ fun DrawVariant()
                         val totalPressTime = pressEndTime - pressStartTime
                         if (totalPressTime < 200) {
                             //выбор названия
-                            Log.i("ss", "click!")
+                            loadTable.value = namePart
+                            navigation.popBackStack()
                         }
                         isPressed.value = false
                     },
@@ -58,7 +151,7 @@ fun DrawVariant()
 
         Text(
 
-            text = "Имя",
+            text = namePart,
             fontSize = 16.sp,
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Medium,
@@ -79,7 +172,13 @@ fun DrawVariant()
             .padding(0.dp, 0.dp, 0.dp, 0.dp),
             onClick = {
                 // удаление названия
-                Log.i("ss", "delet")
+                if (loadTable.value == namePart)
+                    loadTable.value = ""
+                arrayOfParts.value = arrayOfParts.value.filter { it != namePart }.toMutableList()
+                var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                editor.putString("partsNum" + typeOfPart.toString(), Gson().toJson(arrayOfParts.value))
+                editor.apply()
+
             }
         )
         {
@@ -103,6 +202,7 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
     var systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     var barColor = MaterialTheme.colors.background
+    var isInputting = remember { mutableStateOf(false) }
 
     SideEffect {
         systemController.setNavigationBarColor(
@@ -113,7 +213,16 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
         )
     }
 
-    var rezult = remember { mutableStateOf("") }
+    val context = LocalContext.current
+     // считываем нынешний список
+    val arrayOfParts = remember {
+        mutableStateOf(
+            Gson().fromJson(context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
+                .getString("partsNum" + typeOfPart.toString(), ""), mutableListOf<String>()::class.java)
+        )
+    }
+    if (arrayOfParts.value == null)
+        arrayOfParts.value = mutableListOf<String>()
 
     Column(
 
@@ -129,7 +238,6 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
         ) {
             TextButton(
                 onClick = {
-                    loadTable.value = "ses"
                     navigation.popBackStack()
                 },
             ) {
@@ -169,10 +277,9 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
             color = MaterialTheme.colors.primary
         )
 
-
-        repeat(3)
+        for (part in arrayOfParts.value)
         {
-            DrawVariant()
+            DrawVariant(part, loadTable, navigation, arrayOfParts, context, typeOfPart)
         }
 
         Spacer(
@@ -182,48 +289,35 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
         )
 
 
-        Row()
+        if (isInputting.value)
         {
+            PartInput(isInputting, arrayOfParts, context, typeOfPart)
+        }
 
-            InputEditText(
-                value = rezult.value, onValueChange = {
-                    rezult.value = it.filter { "1234567890".contains(it) }
-                },
-                modifier = Modifier
-                    .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
-                    .fillMaxWidth()
-                    .padding(0.dp, 0.dp, 0.dp, 0.dp),
-                keyboardOptions = KeyboardOptions(
-                    KeyboardCapitalization.None,
-                    false,
-                    KeyboardType.Number,
-                    ImeAction.Default
-                ),
-                maxLines = 1,
-                placeHolderString = "Код"
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-            TextButton(
-                onClick = {
-                    //loadTable.value = rezult.value!!
-                },
-                modifier = Modifier
-                    .padding(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent,
-                    contentColor = MaterialTheme.colors.primary,
-                    disabledBackgroundColor = Color.Transparent,
-                    disabledContentColor = MaterialTheme.colors.onSecondary
-                ),
-            ) {
-                Text(
-                    text = "Вот это",
-                    fontSize = 16.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium
+        TextButton(
+            onClick = {
+                isInputting.value = true;
+            },
+            modifier = Modifier
+                .padding(16.dp, 0.dp, 16.dp, 32.dp)
+                .background(
+                    MaterialTheme.colors.secondary,
+                    MaterialTheme.shapes.medium
                 )
-            }
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.background,
+                disabledBackgroundColor = Color.Transparent,
+                disabledContentColor = MaterialTheme.colors.onSecondary
+            ),
+        ) {
+            Text(
+                text = "Добавить",
+                fontSize = 20.sp,
+                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                fontWeight = FontWeight.Medium
+            )
         }
 
     }
@@ -237,7 +331,9 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
 @Composable
 fun previewLoadListOfPartsView() {
     TimeTableTheme {
-       // LoadListOfPartsView(navigation = NavH, loadTable = , typeOfPart = )
+        val nameDisp = remember { mutableStateOf("") }
+        val navController = rememberNavController()
+        //LoadListOfPartsView(navigation = navController, loadTable = nameDisp, typeOfPart = 1)
     }
 }
 

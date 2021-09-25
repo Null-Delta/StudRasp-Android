@@ -120,7 +120,6 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
                             isErrorShow.value = true
                         } else {
                             Log.i("test", result.get())
-
                             loadTable.value = request.timetable!!.json!!
                             loadTable.value.TableID = request.timetable!!.id
                         }

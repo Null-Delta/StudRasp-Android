@@ -1,6 +1,8 @@
 package com.zednull.timetable.components
 
 import android.text.format.Time
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -23,6 +25,7 @@ import com.zednull.timetable.components.ui.SavedTables
 import com.zednull.timetable.components.ui.globalTablesInfo
 import com.zednull.timetable.components.ui.savedTimeTableInfo
 import com.zednull.timetable.dayOfWeek
+import com.zednull.timetable.structure.Lesson
 import com.zednull.timetable.structure.TimeTableStructure
 import com.zednull.timetable.ui.theme.TimeTableTheme
 import java.util.*
@@ -45,6 +48,8 @@ fun EditorView(navigation: NavHostController, tables: MutableState<SavedTables>)
     var selectedDay = remember { mutableStateOf(0) }
     var date = Date()
     var context = LocalContext.current
+    var selectedLesson = remember { mutableStateOf(0) }
+    var selectedWeek = remember { mutableStateOf(0) }
 
     Box() {
         Column {

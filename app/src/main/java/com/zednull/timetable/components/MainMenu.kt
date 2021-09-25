@@ -5,6 +5,7 @@ package com.zednull.timetable.components
 //import androidx.navigation.NavHostController
 //import androidx.navigation.compose.rememberNavController
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -64,6 +65,8 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>) {
             )), TimeTableStructure::class.java)
         )
     }
+
+    Log.i("test", "${savedTimeTable.value.name}")
 
     LaunchedEffect(key1 = savedTimeTable) {
 

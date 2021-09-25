@@ -55,9 +55,8 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                 editor.putString("timetable", result.data!!.getStringExtra("timetable"))
                 editor.apply()
 
-
                 timeTable.value = Gson().fromJson(result.data!!.getStringExtra("timetable"), TimeTableStructure::class.java)
-                Log.i("test", (timeTable.value.lessonsTime).toString())
+                Log.i("test", (timeTable.value.name))
             }
         }
     }
@@ -126,113 +125,9 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                 .weight(1f, true))
         }
 
-        if(timeTable.value.name != "") {
-
-                    TimeTable(timeTable, date, false, date.weekIndex(), selectedDay)
-//                    Row(
-//                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
-//                    ) {
-//                        Text(
-//                            text = "Текущая неделя",
-//                            fontSize = 16.sp,
-//                            fontFamily = MaterialTheme.typography.body1.fontFamily,
-//                            fontWeight = FontWeight.Medium,
-//                            color = MaterialTheme.colors.onSecondary
-//                        )
-//                        Spacer(
-//                            modifier = Modifier
-//                                .fillMaxWidth(1f)
-//                                .weight(1f, true)
-//                        )
-//
-//                        Text(
-//                            text = timeTable.value.getWeekName(date, 0),
-//                            fontSize = 16.sp,
-//                            fontFamily = MaterialTheme.typography.body1.fontFamily,
-//                            fontWeight = FontWeight.Medium,
-//                            color = MaterialTheme.colors.onSecondary
-//                        )
-//                    }
-//
-//                    if (timeTable.value.days[page].getLessons(Date(), 0).isEmpty()) {
-//                        Text(
-//                            text = "Сегодня пар нет",
-//                            modifier = Modifier
-//                                .padding(24.dp)
-//                                .fillMaxWidth(),
-//                            fontSize = 16.sp,
-//                            fontFamily = MaterialTheme.typography.body1.fontFamily,
-//                            fontWeight = FontWeight.Medium,
-//                            color = MaterialTheme.colors.onSecondary,
-//                            textAlign = TextAlign.Center
-//                        )
-//                    }
-//
-//                    repeat(timeTable.value.days[page].getLessons(Date(), 0).size) {
-//                        Card(
-//                            date = date,
-//                            lesson = timeTable.value.days[page].getLessons(Date(), 0)[it],
-//                            state = cardState(date, timeTable, page, it),
-//                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(), 0)[it].lessonNumber - 1]
-//                        )
-//                        if (it != 15) {
-//                            Spacer(modifier = Modifier.height(8.dp))
-//                        }
-//                    }
-//
-//                    Row(
-//                        modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 16.dp)
-//                    ) {
-//                        Text(
-//                            text = "Следующая неделя",
-//                            fontSize = 16.sp,
-//                            fontFamily = MaterialTheme.typography.body1.fontFamily,
-//                            fontWeight = FontWeight.Medium,
-//                            color = MaterialTheme.colors.onSecondary
-//                        )
-//                        Spacer(
-//                            modifier = Modifier
-//                                .fillMaxWidth(1f)
-//                                .weight(1f, true)
-//                        )
-//
-//                        Text(
-//                            text = timeTable.value.getWeekName(date, 1),
-//                            fontSize = 16.sp,
-//                            fontFamily = MaterialTheme.typography.body1.fontFamily,
-//                            fontWeight = FontWeight.Medium,
-//                            color = MaterialTheme.colors.onSecondary
-//                        )
-//                    }
-//
-//                    if (timeTable.value.days[page].getLessons(Date(), 1).isEmpty()) {
-//                        Text(
-//                            text = "Сегодня пар нет",
-//                            modifier = Modifier
-//                                .padding(24.dp)
-//                                .fillMaxWidth(),
-//                            fontSize = 16.sp,
-//                            fontFamily = MaterialTheme.typography.body1.fontFamily,
-//                            fontWeight = FontWeight.Medium,
-//                            color = MaterialTheme.colors.onSecondary,
-//                            textAlign = TextAlign.Center
-//                        )
-//                    }
-//
-//                    repeat(timeTable.value.days[page].getLessons(Date(), 1).size) {
-//                        Card(
-//                            date = date,
-//                            lesson = timeTable.value.days[page].getLessons(Date(), 1)[it],
-//                            state = CardState.Highlight,
-//                            time = timeTable.value.lessonsTime[timeTable.value.days[page].getLessons(Date(),1)[it].lessonNumber - 1]
-//                        )
-//                        if (it != 15) {
-//                            Spacer(modifier = Modifier.height(8.dp))
-//                        }
-//                    }
-//                }
-//            }
-        }
+        //if(timeTable.value.name != "") {
+            TimeTable(timeTable, date, false, date.weekIndex(), selectedDay)
+        //}
     }
 }
 

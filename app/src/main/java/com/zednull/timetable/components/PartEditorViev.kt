@@ -89,7 +89,7 @@ fun PartEditorView(
         ) {
             TextButton(
                 onClick = {
-                    loadTable.value = "close"!!
+                    loadTable.value = "close"
                 },
             ) {
                 Text(
@@ -109,7 +109,7 @@ fun PartEditorView(
 
             TextButton(
                 onClick = {
-                    loadTable.value = "add"!!
+                    loadTable.value = "add"
                 },
                 enabled = (dist.value != "" && prep.value != "" && room.value != "" && typ.value != "")
             ) {

@@ -54,7 +54,12 @@ class LoadListOfPartsActivity : ComponentActivity() {
                     }
                     else if(paraIsReady.value == "add") {
                         val data = Intent()
-                        data.putExtra("para", Gson().toJson(arrayListOf(nameDisp, namePrep, nameRoom, nameType)))
+                        data.putExtra("name", nameDisp.value)
+                        data.putExtra("teacherName", namePrep.value)
+                        data.putExtra("audience", nameRoom.value)
+                        data.putExtra("type", nameType.value)
+
+                        //data.putExtra("para", Gson().toJson(arrayListOf(nameDisp, namePrep, nameRoom, nameType)))
                         setResult(1, data)
                         finish()
                     }

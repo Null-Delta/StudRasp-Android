@@ -178,7 +178,7 @@ fun SettingsNavigation(paddingValues: PaddingValues) {
             EmailAddView(navController, user)
         }
         composable("editor") {
-            EditorView(tables)
+            EditorView(navController, tables)
         }
 
     }

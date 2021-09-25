@@ -47,6 +47,7 @@ import com.google.gson.reflect.TypeToken
 import com.zednull.timetable.LoadListOfPartsActivity
 import com.zednull.timetable.LoadTimeTableActivity
 import com.zednull.timetable.R
+import com.zednull.timetable.components.CardState
 import com.zednull.timetable.structure.*
 import java.util.stream.Collectors.toList
 
@@ -148,17 +149,9 @@ fun DrawTable(
             )
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onPress = {
-                        val pressStartTime = System.currentTimeMillis()
-                        isPressed.value = true
-                        this.tryAwaitRelease()
-                        val pressEndTime = System.currentTimeMillis()
-                        val totalPressTime = pressEndTime - pressStartTime
-                        if (totalPressTime < 200) {
-                            onTap()
-                        }
-                        isPressed.value = false
-                    },
+                    onTap = {
+                        onTap()
+                    }
                 )
             }
     )
@@ -352,24 +345,15 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
 
                 if(request.error.code == 0) {
                     user.value.session = request.session!!
-                    tables.value.globalTables = request.timeTables!!.toMutableStateList()
-                    tables.value.saveArray(MyTimeTableState.global, context)
+                    tables.value.globalTables.removeAll { true }
+
+                    for (i in request.timeTables!!) {
+                        tables.value.globalTables.add(i)
+                    }
                 }
             }
         }
     }
-    ///////////////////
-        // временное решение
-    val testname = remember { mutableStateOf("Тест кнопка") }
-
-    val loadRequest = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result != null && result.data != null) {
-            testname.value = "" + result.data!!.getStringExtra("para")
-        }
-    }
-    ////////////////////////
 
     Column(
         modifier = Modifier
@@ -380,19 +364,6 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                 .padding(16.dp, 16.dp, 16.dp, 13.dp)
                 .fillMaxWidth()
         ) {
-            TextButton(
-                onClick = {
-                    loadRequest.launch(Intent(context, LoadListOfPartsActivity::class.java))
-                },
-            ) {
-                Text(
-                    text = testname.value, // временное решение
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colors.primary
-                )
-            }
             TextButton(
                 onClick = {
                     navigation.popBackStack()

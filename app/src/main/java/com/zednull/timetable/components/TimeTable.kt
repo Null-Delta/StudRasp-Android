@@ -1,6 +1,9 @@
 package com.zednull.timetable.components
 
+import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -18,6 +22,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.zednull.timetable.LoadListOfPartsActivity
 import com.zednull.timetable.components.ui.MyTimeTableState
 import com.zednull.timetable.minutes
 import com.zednull.timetable.structure.Lesson
@@ -36,11 +41,13 @@ fun CardState(week: Int,index: Int, lesson: Int, table: TimeTableStructure, date
     }
 
     if(lesson - 1 >= 0)
-        Log.i("test","${date.minutes()} ${table.lessonsTime[lesson - 1].start} ${table.lessonsTime[lesson - 1].end} ")
+        Log.i("testa","${index} : ${lesson} ${getLastLesson(index, lesson, table, date, week)}")
+    if(getLastLesson(index, lesson, table, date, week) > 1)
+        Log.i("testa","${date.minutes()} , ${table.lessonsTime[lesson - 1].start} ${table.lessonsTime[getLastLesson(index, lesson, table, date, week) - 1].end}")
     return if(date.weekDayNum() - 1 != index) CardState.Highlight
     else if(date.minutes() < table.lessonsTime[lesson - 1].start && (
-                (table.days[index].getLessons(date, week).firstOrNull { it.lessonNumber < lesson } != null) || (date.minutes() > table.lessonsTime[
-                        getLastLesson(index, lesson, table, date, week)
+                (table.days[index].getLessons(date, week).firstOrNull { it.lessonNumber < lesson } == null) || (date.minutes() > table.lessonsTime[
+                        getLastLesson(index, lesson, table, date, week) - 1
                 ].end)
             )) CardState.Wait
     else if(date.minutes() >= table.lessonsTime[lesson - 1].start && date.minutes() <= table.lessonsTime[lesson - 1].end) CardState.Active
@@ -49,9 +56,14 @@ fun CardState(week: Int,index: Int, lesson: Int, table: TimeTableStructure, date
 }
 
 fun getLastLesson(index: Int, lesson: Int, table: TimeTableStructure, date: Date, week: Int): Int {
-    return table.days[index].getLessons(date, week).maxOf {
-        if (it.lessonNumber >= lesson) -1 else it.lessonNumber
+    var max = -1;
+    for (i in 0 until table.days[index].getLessons(date, week).size) {
+        if(table.days[index].getLessons(date, week)[i].lessonNumber > max &&
+            table.days[index].getLessons(date, week)[i].lessonNumber < lesson) {
+            max = table.days[index].getLessons(date, week)[i].lessonNumber
+        }
     }
+    return max
 }
 
 fun isLesson(week: Int, index: Int, lesson: Int, table: TimeTableStructure, date: Date): Boolean {
@@ -122,6 +134,33 @@ fun TimeTable(
         pagerState.animateScrollToPage(selectedDay.value)
     }
 
+    var selectedLesson = remember { mutableStateOf(0) }
+    var selectedWeek = remember { mutableStateOf(0) }
+
+    var context = LocalContext.current
+
+    val addLessonRequest = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result != null && result.data != null) {
+            activeTable.value.days[selectedDay.value].changeLessons(date, selectedWeek.value) {
+                Log.i("test", "changed")
+
+                it.removeAll { l ->
+                    l.lessonNumber == selectedLesson.value
+                }
+
+                it.add(Lesson(
+                    result.data!!.extras!!.getString("name", ""),
+                    result.data!!.extras!!.getString("teacherName", ""),
+                    result.data!!.extras!!.getString("audience", ""),
+                    result.data!!.extras!!.getString("type", ""),
+                    selectedLesson.value
+                ))
+            }
+        }
+    }
+
     HorizontalPager(state = pagerState) { page ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -177,14 +216,10 @@ fun TimeTable(
                         ) CardState.Highlight else CardState.Select,
                         time = activeTable.value.lessonsTime[it],
                         onTap = {
-                            activeTable.value.days[page].changeLessons(date, 0) { list ->
-                                list.removeAll { l ->
-                                    l.lessonNumber == it + 1
-                                }
-                                list.add(
-                                    Lesson("test", "test", "test", "test", it + 1)
-                                )
-                            }
+                                selectedLesson.value = it + 1
+                                selectedWeek.value = 0
+
+                                addLessonRequest.launch(Intent(context, LoadListOfPartsActivity::class.java))
                         },
                         onLongTap = {
                             activeTable.value.days[page].changeLessons(date, 0) { list ->
@@ -287,14 +322,10 @@ fun TimeTable(
                         ) CardState.Highlight else CardState.Select,
                         time = activeTable.value.lessonsTime[it],
                         onTap = {
-                            activeTable.value.days[page].changeLessons(date, 1) { list ->
-                                list.removeAll { l ->
-                                    l.lessonNumber == it + 1
-                                }
-                                list.add(
-                                    Lesson("test", "test", "test", "test", it + 1)
-                                )
-                            }
+                            selectedLesson.value = it + 1
+                            selectedWeek.value = 1
+
+                            addLessonRequest.launch(Intent(context, LoadListOfPartsActivity::class.java))
                         }
                     )
                 }

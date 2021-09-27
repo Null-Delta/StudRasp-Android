@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zednull.timetable">
+    package="com.zednull.studrasp">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,34 +12,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
-            android:name=".AddTableActivity"
+            android:name="com.zednull.studrasp.AddTableActivity"
             android:exported="true"
             android:theme="@style/Theme.TimeTable">
-
-            <intent-filter>
-                <!--below line is to set the action to our intent to view-->
-                <action android:name="android.intent.action.VIEW" />
-                <!--on below line we are adding a default category to our intent-->
-                <category android:name="android.intent.category.DEFAULT" />
-                <!--on below line we are adding a category to make our app browsable-->
-                <category android:name="android.intent.category.BROWSABLE" />
-                <!--on below line we are specifying the host name and
-                    the scheme type from which we will be calling our app-->
-                <data
-                    android:host="addtable"
-                    android:scheme="studrasp" />
-            </intent-filter>
 
             <!--below is the same filter as above just the scheme is changed to http -->
             <!--so we can open our app with the url starting with https and http as well-->
         </activity>
         <activity
-            android:name=".AccountActivity"
+            android:name="com.zednull.studrasp.AccountActivity"
             android:exported="true"
             android:label="@string/title_activity_account"
             android:theme="@style/Theme.TimeTable" />
         <activity
-            android:name=".LaunchActivity"
+            android:name="com.zednull.studrasp.LaunchActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.SplashTheme">
@@ -50,19 +36,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.zednull.studrasp.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TimeTable" >
+            <intent-filter>
+                <!--below line is to set the action to our intent to view-->
+                <action android:name="android.intent.action.VIEW" />
+                <!--on below line we are adding a default category to our intent-->
+                <category android:name="android.intent.category.DEFAULT" />
+                <!--on below line we are adding a category to make our app browsable-->
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!--on below line we are specifying the host name and
+                    the scheme type from which we will be calling our app-->
+                <data
+                    android:host="studrasp.ru"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.zednull.studrasp.LoadTimeTableActivity"
             android:exported="true"
             android:theme="@style/Theme.TimeTable" />
         <activity
-            android:name=".LoadTimeTableActivity"
+            android:name="com.zednull.studrasp.LoadListOfPartsActivity"
             android:exported="true"
             android:theme="@style/Theme.TimeTable" />
         <activity
-            android:name=".LoadListOfPartsActivity"
-            android:exported="true"
-            android:theme="@style/Theme.TimeTable" />
-        <activity
-            android:name=".RegistrationActivity"
+            android:name="com.zednull.studrasp.RegistrationActivity"
             android:exported="true"
             android:theme="@style/Theme.TimeTable" />
     </application>

@@ -13,6 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.rememberPagerState
 import com.zednull.studrasp.R
 import com.zednull.studrasp.dayOfWeek
 import com.zednull.studrasp.ui.theme.TimeTableTheme
@@ -29,12 +31,13 @@ fun getTableName(tables: MutableState<SavedTables>): String {
     }
 }
 
+@ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
 fun EditorView(navigation: NavHostController, tables: MutableState<SavedTables>, paddingValues: PaddingValues) {
     
     val selectedTable = remember { mutableStateOf(tables.value.selectedTable()) }
-    val selectedDay = remember { mutableStateOf(0) }
+    val selectedDay = rememberPagerState(pageCount = 7,0,0f,7,false)
     val date = Date()
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
@@ -56,7 +59,7 @@ fun EditorView(navigation: NavHostController, tables: MutableState<SavedTables>,
             Column {
                 TextButton(
                     onClick = {
-                              tables.value.selectedTable().days[selectedDay.value].changeLessons(date,selectedWeek.value) {
+                              tables.value.selectedTable().days[selectedDay.currentPage].changeLessons(date,selectedWeek.value) {
                                   it.removeAll { l ->
                                       l.lessonNumber == selectedLesson.value
                                   }
@@ -154,7 +157,7 @@ fun EditorView(navigation: NavHostController, tables: MutableState<SavedTables>,
                     date = date,
                     isEditing = true,
                     dayIndex = date.dayOfWeek(),
-                    selectedDay = selectedDay,
+                    pagerState = selectedDay,
                     sheetState,
                     selectedLesson,
                     selectedWeek

@@ -1,9 +1,5 @@
 package com.zednull.studrasp.components
 
-//import androidx.navigation.NavController
-//import androidx.navigation.NavHost
-//import androidx.navigation.NavHostController
-//import androidx.navigation.compose.rememberNavController
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -29,6 +25,7 @@ import com.zednull.studrasp.R
 import com.zednull.studrasp.structure.emptyTimeTable
 import com.zednull.studrasp.ui.theme.TimeTableTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.studrasp.AddTableActivity
@@ -55,9 +52,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
             barColor,useDarkIcons
         )
     }
-
-
-
+    
     val context = LocalContext.current
     val menu = remember { mutableStateOf(0) }
     var code = remember { mutableStateOf(loadCode) }
@@ -112,12 +107,18 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
 fun Navigation(navController: NavHostController, date: Date, table: MutableState<TimeTableStructure>, day: MutableState<Int>, paddingValues: PaddingValues, code: MutableState<String>) {
     NavHost(navController, startDestination = "home") {
         composable("home") {
+
+            val pagerState = rememberPagerState(
+                pageCount = 7,
+                day.value,0f,8,false
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = paddingValues)
             ) {
-                TimeTableView(date, table, day, paddingValues)
+                TimeTableView(date, table, pagerState, paddingValues)
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -125,7 +126,7 @@ fun Navigation(navController: NavHostController, date: Date, table: MutableState
                         .fillMaxSize()
                         .weight(1f, true)
                         .background(Color.Transparent))
-                    WeekView(date,  day)
+                    WeekView(date,  pagerState)
                 }
             }
         }

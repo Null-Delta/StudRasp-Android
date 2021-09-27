@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.zednull.studrasp.LoadListOfPartsActivity
 import com.zednull.studrasp.minutes
@@ -115,24 +116,11 @@ fun TimeTable(
     date: Date,
     isEditing: Boolean,
     dayIndex: Int,
-    selectedDay: MutableState<Int>,
+    pagerState: PagerState,
     sheetState: ModalBottomSheetState? = null,
     selectedLessonParent: MutableState<Int>? = null,
     selectedWeekParend: MutableState<Int>? = null
 ) {
-    val pagerState = rememberPagerState(
-        pageCount = 7,
-        selectedDay.value,0f,8,false
-    )
-
-    LaunchedEffect(pagerState.currentPage) {
-        selectedDay.value = pagerState.currentPage
-    }
-
-    LaunchedEffect(selectedDay.value) {
-        pagerState.animateScrollToPage(selectedDay.value)
-    }
-
     var isLongPress = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = isLongPress.value) {
@@ -151,7 +139,7 @@ fun TimeTable(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result != null && result.data != null) {
-            activeTable.value.days[selectedDay.value].changeLessons(date, selectedWeek.value) {
+            activeTable.value.days[pagerState.currentPage].changeLessons(date, selectedWeek.value) {
                 Log.i("test", "changed")
 
                 it.removeAll { l ->

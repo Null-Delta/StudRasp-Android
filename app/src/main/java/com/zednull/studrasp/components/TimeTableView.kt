@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.github.kittinunf.fuel.Fuel
 import com.zednull.studrasp.LoadTimeTableActivity
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.gson.Gson
 import com.zednull.studrasp.structure.TimeTableStructure
@@ -32,13 +33,8 @@ import java.util.*
 @InternalCoroutinesApi
 @ExperimentalPagerApi
 @Composable
-fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selectedDay: MutableState<Int>, paddingValues: PaddingValues) {
+fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selectedDay: PagerState, paddingValues: PaddingValues) {
     val context = LocalContext.current
-
-    val pagerState = rememberPagerState(
-        pageCount = 7,
-        selectedDay.value,0f,7,false
-    )
 
     val loadRequest = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -55,13 +51,13 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
         }
     }
 
-    LaunchedEffect(pagerState.currentPage) {
-            selectedDay.value = pagerState.currentPage
-    }
-
-    LaunchedEffect(selectedDay.value) {
-        pagerState.animateScrollToPage(selectedDay.value)
-    }
+//    LaunchedEffect(pagerState.currentPage) {
+//            selectedDay.value = pagerState.currentPage
+//    }
+//
+//    LaunchedEffect(selectedDay.value) {
+//        pagerState.animateScrollToPage(selectedDay.value)
+//    }
 
     val ticker = remember { mutableStateOf(0) }
 

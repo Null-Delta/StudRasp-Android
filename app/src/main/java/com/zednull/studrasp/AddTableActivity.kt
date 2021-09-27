@@ -15,6 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.kittinunf.fuel.Fuel
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.studrasp.components.TimeTable
@@ -26,6 +29,7 @@ import com.zednull.studrasp.ui.theme.TimeTableTheme
 import java.util.*
 
 class AddTableActivity : ComponentActivity() {
+    @ExperimentalPagerApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -42,6 +46,7 @@ class AddTableActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalPagerApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddTableView(code: String,act: Activity) {
@@ -61,6 +66,8 @@ fun AddTableView(code: String,act: Activity) {
             barColor,useDarkIcons
         )
     }
+
+    var pagerState = rememberPagerState(7,0,0f,7,false)
 
     LaunchedEffect(key1 = isLoad.value) {
         if(!isLoad.value) {
@@ -150,13 +157,13 @@ fun AddTableView(code: String,act: Activity) {
                         date = Date(),
                         isEditing = false,
                         dayIndex = Date().weekIndex(),
-                        selectedDay = selectedDay,
+                        pagerState = pagerState,
                     )
                 }
 
                 Column {
                     Spacer(modifier = Modifier.fillMaxHeight().weight(1f,true))
-                    WeekView(date = Date(), selected = selectedDay)
+                    WeekView(date = Date(), selected = pagerState)
                 }
             }
         }

@@ -83,7 +83,7 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             InputEditText(value = code.value, onValueChange = {
-                code.value = it.filter { "1234567890".contains(it) }
+                code.value = it
             },
             modifier = Modifier
                 .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
@@ -94,7 +94,7 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
                 keyboardOptions = KeyboardOptions(
                     KeyboardCapitalization.None,
                     false,
-                    KeyboardType.Number,
+                    KeyboardType.Text,
                     ImeAction.Default
                 ),
                 maxLines = 1,
@@ -104,7 +104,7 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
             Spacer(modifier = Modifier.width(8.dp))
             
             TextButton(onClick = {
-                Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to code.value))
+                Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable_by_invite_code", "invite_code" to code.value))
                     .responseString { request, response, result ->
                         var request: requestStruct = Gson().fromJson(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {

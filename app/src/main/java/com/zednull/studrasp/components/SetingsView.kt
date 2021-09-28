@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zednull.studrasp.R
@@ -111,6 +112,7 @@ fun SettingsView(navController: NavController) {
     }
 }
 
+@ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
 fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>) {

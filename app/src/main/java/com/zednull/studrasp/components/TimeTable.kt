@@ -4,7 +4,13 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.DecayAnimation
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,10 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.pager.*
 import com.zednull.studrasp.LoadListOfPartsActivity
 import com.zednull.studrasp.minutes
 import com.zednull.studrasp.structure.Lesson
@@ -157,7 +160,17 @@ fun TimeTable(
         }
     }
 
-    HorizontalPager(state = pagerState) { page ->
+    HorizontalPager(
+        state = pagerState,
+        flingBehavior = PagerDefaults.rememberPagerFlingConfig(
+            state = pagerState,
+            decayAnimationSpec = rememberSplineBasedDecay(),
+            snapAnimationSpec = spring(
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessVeryLow
+            )
+        ),dragEnabled = true
+    ) { page ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {

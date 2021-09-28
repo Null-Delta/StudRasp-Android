@@ -52,7 +52,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
             barColor,useDarkIcons
         )
     }
-    
+
     val context = LocalContext.current
     val menu = remember { mutableStateOf(0) }
     var code = remember { mutableStateOf(loadCode) }

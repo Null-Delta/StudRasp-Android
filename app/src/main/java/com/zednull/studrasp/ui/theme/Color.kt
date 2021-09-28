@@ -4,9 +4,9 @@ import androidx.compose.ui.graphics.Color
 
 val AppBackground = Color(0xFFF6F6F6)
 val AppEnable = Color(0xFF518495)
-val AppDisable = Color(0xFFDCEAF1)
-var AppEnableLight = Color(0x88518495)
-var AppDisableLight = Color(0xCCDCEAF1)
+val AppDisable = Color(0xFFE2E8EC)
+var AppEnableLight = Color(0x88518494)
+var AppDisableLight = Color(0xCCE2E8EC)
 
 var AppChangedGlobal = Color(0xFFB19037)
 var AppChangedGlobalText = Color(0xFFEBCA8A)

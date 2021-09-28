@@ -110,7 +110,6 @@ fun DrawTable(
     onSet: () -> (Unit) = {},
     onCopy: () -> (Unit) = {})
 {
-    //val isPressed = remember { mutableStateOf(false) }
     val expan = remember { mutableStateOf(false) }
 
     Row (
@@ -245,7 +244,7 @@ fun DrawTable(
                             onCopy()
                         }) {
                             Text(
-                                text = "Скопировать ссылку",
+                                text = "Скопировать код",
                                 color = MaterialTheme.colors.primary,
                                 fontSize = 16.sp,
                                 fontFamily = MaterialTheme.typography.body1.fontFamily,
@@ -319,6 +318,46 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
         systemController.setStatusBarColor(
             barColor,useDarkIcons
         )
+    }
+
+    val localList = tables.value.localTables.toMutableStateList()
+    val globalList = tables.value.globalTables.toMutableStateList()
+
+    val isDeleting = remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = isDeleting.value) {
+        if(isDeleting.value) {
+            if(tables.value.selectedType == MyTimeTableState.local) {
+                tables.value.localTables.remove(tables.value.selectedTable())
+            } else {
+                val item = tables.value.globalTables[tables.value.selectedTable]
+
+                Fuel.post(
+                    "https://$mainDomain/main.php",
+                    listOf(
+                        "action" to "delete_timetable",
+                        "login" to user.value.login,
+                        "session" to user.value.session,
+                        "id" to item.id
+                    )
+                ).responseString {_,_, result ->
+                    val request = Gson().fromJson(result.get(), requestStruct::class.java)
+
+                    if(request.error.code == 0) {
+                        tables.value.globalTables.removeAll {
+                            it.id == item.id
+                        }
+
+                        tables.value.clearSaved(context)
+                        tables.value.saveArray(MyTimeTableState.global, context)
+                    } else {
+                        errorMessage.value = request.error.message
+                        isErrorShow.value = true
+                    }
+                }
+            }
+            isDeleting.value = false
+        }
     }
 
     if(isErrorShow.value) {
@@ -429,10 +468,8 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
         )
 
         LazyColumn(
-
             modifier = Modifier
                 .fillMaxSize()
-
         ) {
             item {
                 Row(
@@ -517,47 +554,40 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                         }
                     },
                     {
-                        Fuel.post(
-                            "https://$mainDomain/main.php",
-                            listOf(
-                                "action" to "delete_timetable",
-                                "login" to user.value.login,
-                                "session" to user.value.session,
-                                "id" to item.id
-                            )
-                        ).responseString {_,_, result ->
-                            val request = Gson().fromJson(result.get(), requestStruct::class.java)
-
-                            if(request.error.code == 0) {
-                                tables.value.globalTables.removeAll {
-                                    it.id == item.id
-                                }
-
-                                tables.value.clearSaved(context)
-                                tables.value.saveArray(MyTimeTableState.global, context)
-                            } else {
-                                errorMessage.value = request.error.message
-                                isErrorShow.value = true
-                            }
+                        tables.value.selectedType = MyTimeTableState.global
+                        tables.value.selectedTable = globalList.indexOfFirst { v ->
+                            v.id == item.id
                         }
+                        isDeleting.value = true
                     }, {
-                        if(tables.value.isLoad(item.id) && tables.value.globalSavedTables.first {
-                            it.id == item.id.toInt()
+                        if(tables.value.isLoad(
+                                tables.value.globalTables[globalList.indexOfFirst {
+                                    it.id == item.id
+                                }].id
+                            ) && tables.value.globalSavedTables.first {
+                            it.id == tables.value.globalTables[globalList.indexOfFirst {
+                                it.id == item.id
+                            }].id.toInt()
                             }.isChange()) {
                             tables.value.selectedType = MyTimeTableState.global
-                            tables.value.selectedID = item.id.toInt()
-                            tables.value.selectedTable = tables.value.globalTables.indexOfFirst {
+                            tables.value.selectedID = tables.value.globalTables[globalList.indexOfFirst {
+                                it.id == item.id
+                            }].id.toInt()
+                            tables.value.selectedTable = globalList.indexOfFirst {
                                 it.id == item.id
                             }
 
                             navigation.navigate("editor")
 
                         } else {
+
                             Fuel.post(
                                 "https://$mainDomain/main.php",
                                 listOf(
                                     "action" to "get_timetable",
-                                    "id" to item.id
+                                    "id" to tables.value.globalTables[globalList.indexOfFirst { v ->
+                                        v == item
+                                    }].id
                                 )
                             ). responseString{_,_,result ->
                                 val request = Gson().fromJson(result.get(), requestStruct::class.java)
@@ -582,8 +612,10 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                                     tables.value.saveArray(MyTimeTableState.global, context)
 
                                     tables.value.selectedType = MyTimeTableState.global
-                                    tables.value.selectedID = item.id.toInt()
-                                    tables.value.selectedTable = tables.value.globalTables.indexOfFirst {
+                                    tables.value.selectedID = tables.value.globalTables[globalList.indexOfFirst {
+                                        it.id == item.id
+                                    }].id.toInt()
+                                    tables.value.selectedTable = globalList.indexOfFirst {
                                         it.id == item.id
                                     }
                                     activity!!.runOnUiThread {
@@ -602,7 +634,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                     }, {
                         code.value = item.invite_code!!
                     }, {
-                        clipboard.setText(AnnotatedString("https://studrasp.ru/addtable/${item.invite_code!!}"))
+                        clipboard.setText(AnnotatedString(item.invite_code!!))
                     })
             }
 
@@ -653,12 +685,17 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                     }
                 },
                     onDelete = {
-                        tables.value.localTables.remove(it)
+                        tables.value.selectedType = MyTimeTableState.local
+                        tables.value.selectedTable = localList.indexOfFirst { v ->
+                            v == it
+                        }
+                        isDeleting.value = true
                 },
                     onTap = {
                         tables.value.selectedID = -1
                         tables.value.selectedType = MyTimeTableState.local
-                        tables.value.selectedTable = tables.value.localTables.indexOfFirst {value ->
+                        Log.i("test",it.name)
+                        tables.value.selectedTable = localList.indexOfFirst {value ->
                             value == it
                         }
                         navigation.navigate("editor")

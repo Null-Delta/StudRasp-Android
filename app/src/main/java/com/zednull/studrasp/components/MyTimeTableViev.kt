@@ -99,6 +99,65 @@ class savedTimeTableInfo(var id: Int, var loaded: TimeTableStructure, var table:
 }
 
 @Composable
+fun AcceptedTable(
+    toDelet: MutableState<Boolean>,
+    tables: MutableState<SavedTables>,
+    toDelet1: MutableState<TimeTableStructure>
+)
+{
+    AlertDialog(
+        onDismissRequest = { },
+        title = {
+            Text(
+                text = "Вы уверены?",
+                fontSize = 20.sp,
+                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.primary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(0.dp, 16.dp, 0.dp, 16.dp)
+                    .fillMaxWidth()
+            ) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    toDelet.value = false
+                    tables.value.localTables.remove(toDelet1.value)
+                },
+                modifier = Modifier
+                    .padding(0.dp, 8.dp, 0.dp, 8.dp),
+            ) {
+                Text("Да",
+                    color = MaterialTheme.colors.primary,
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    toDelet.value = false
+                },
+                modifier = Modifier
+                    .padding(0.dp, 8.dp, 0.dp, 8.dp),
+            ) {
+                Text("Отмена",
+                    color = MaterialTheme.colors.primary,
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        },
+    )
+}
+
+@Composable
 fun DrawTable(
     state: MyTimeTableState,
     name: String,
@@ -311,6 +370,8 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
 
     val isErrorShow = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
+    val isDelet = remember { mutableStateOf(false) }
+    val toDelet = remember { mutableStateOf(TimeTableStructure("", "", "",SnapshotStateList<Day>(),SnapshotStateList<LessonTime>(), 0)) }
 
     SideEffect {
         systemController.setNavigationBarColor(
@@ -338,6 +399,10 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                 }
             },
         )
+    }
+    if (isDelet.value)
+    {
+        AcceptedTable(isDelet, tables, toDelet)
     }
 
     LaunchedEffect(key1 = wasLoad.value) {
@@ -653,7 +718,11 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                     }
                 },
                     onDelete = {
-                        tables.value.localTables.remove(it)
+                        //tables.value.localTables.remove(it)/////////////
+                        isDelet.value = true
+                        toDelet.value = it
+                        //AcceptedTable(isDelet)
+
                 },
                     onTap = {
                         tables.value.selectedID = -1

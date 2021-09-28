@@ -10,11 +10,13 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -22,6 +24,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -324,6 +329,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
     val globalList = tables.value.globalTables.toMutableStateList()
 
     val isDeleting = remember { mutableStateOf(false) }
+    var isDeleteDialogOpen = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = isDeleting.value) {
         if(isDeleting.value) {
@@ -407,6 +413,71 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                 }
             }
         }
+    }
+
+    if(isDeleteDialogOpen.value) {
+        AlertDialog(
+            onDismissRequest = {  },
+            title = {
+                Text(
+                    text = "Удаление",
+                    fontSize = 20.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(0.dp, 16.dp, 0.dp, 16.dp)
+                        .fillMaxWidth()
+                ) },
+            text = {
+                Text(
+                    text = "Вы уверены, что хотите удалить расписание?",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colors.onSecondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(0.dp, 16.dp, 0.dp, 16.dp)
+                        .fillMaxWidth()
+                ) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        isDeleting.value = true
+                        isDeleteDialogOpen.value = false
+                    },
+                    modifier = Modifier
+                        .padding(0.dp, 8.dp, 0.dp, 8.dp),
+                    ) {
+                    Text("Да",
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        isDeleteDialogOpen.value = false
+                    },
+                    modifier = Modifier
+                        .padding(0.dp, 8.dp, 0.dp, 8.dp),
+                ) {
+                    Text("Нет",
+                        color = MaterialTheme.colors.primary,
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            },
+        )
     }
 
     Column(
@@ -558,7 +629,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                         tables.value.selectedTable = globalList.indexOfFirst { v ->
                             v.id == item.id
                         }
-                        isDeleting.value = true
+                        isDeleteDialogOpen.value = true
                     }, {
                         if(tables.value.isLoad(
                                 tables.value.globalTables[globalList.indexOfFirst {
@@ -689,7 +760,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                         tables.value.selectedTable = localList.indexOfFirst { v ->
                             v == it
                         }
-                        isDeleting.value = true
+                        isDeleteDialogOpen.value = true
                 },
                     onTap = {
                         tables.value.selectedID = -1

@@ -51,14 +51,6 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
         }
     }
 
-//    LaunchedEffect(pagerState.currentPage) {
-//            selectedDay.value = pagerState.currentPage
-//    }
-//
-//    LaunchedEffect(selectedDay.value) {
-//        pagerState.animateScrollToPage(selectedDay.value)
-//    }
-
     val ticker = remember { mutableStateOf(0) }
 
     LaunchedEffect(key1 = ticker.value) {
@@ -82,8 +74,6 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
             editor.apply()
         }
     }
-    //timeTable.value.name = ""
-
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -109,52 +99,17 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
 
             Row(
                 modifier = Modifier
-                    .padding(16.dp,0.dp,16.dp,16.dp),
+                    .padding(16.dp,0.dp,16.dp,16.dp)
+                    .height(42.dp),
             ) {
-                TextButton(
-                    onClick = {
-                        Log.i("check","here")
-                        loadRequest.launch(Intent(context, LoadTimeTableActivity::class.java))
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent,
-                        contentColor = MaterialTheme.colors.primary,
-                        disabledBackgroundColor = MaterialTheme.colors.background,
-                        disabledContentColor = MaterialTheme.colors.secondary
-                    ),
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.height(42.dp)
                 ) {
-                    Text(
-
-                        text = if ( timeTable.value.name != "")
-                            timeTable.value.name
-                        else
-                            "Выбрать",
-                        fontSize = 20.sp,
-                        fontFamily = MaterialTheme.typography.body1.fontFamily,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
-
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, true))
-
-                if(timeTable.value.name != "") {
                     TextButton(
                         onClick = {
-                            Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to timeTable.value.TableID.toString()))
-                                .responseString { _, _, result ->
-                                    val request: requestStruct = Gson().fromJson(result.get(),
-                                        requestStruct::class.java)
-                                    if(request.error.code == 0) {
-                                        timeTable.value = request.timetable!!.json!!
-                                        timeTable.value.TableID = request.timetable!!.id
-                                        context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
-                                        val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
-                                        editor.putString("timetable", Gson().toJson(timeTable.value))
-                                        editor.apply()
-                                    }
-                                }
+                            Log.i("check","here")
+                            loadRequest.launch(Intent(context, LoadTimeTableActivity::class.java))
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color.Transparent,
@@ -164,11 +119,58 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                         ),
                     ) {
                         Text(
-                            text = "Обновить",
-                            fontSize = 16.sp,
+
+                            text = if ( timeTable.value.name != "")
+                                timeTable.value.name
+                            else
+                                "Выбрать",
+                            fontSize = 20.sp,
                             fontFamily = MaterialTheme.typography.body1.fontFamily,
                             fontWeight = FontWeight.Medium,
                         )
+                    }
+                }
+
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, true))
+
+                if(timeTable.value.name != "") {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.height(42.dp)
+                    ) {
+                        TextButton(
+                            onClick = {
+                                Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to timeTable.value.TableID.toString()))
+                                    .responseString { _, _, result ->
+                                        val request: requestStruct = Gson().fromJson(result.get(),
+                                            requestStruct::class.java)
+                                        if(request.error.code == 0) {
+                                            timeTable.value = request.timetable!!.json!!
+                                            timeTable.value.TableID = request.timetable!!.id
+                                            context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
+                                            val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                                            editor.putString("timetable", Gson().toJson(timeTable.value))
+                                            editor.apply()
+                                        }
+                                    }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent,
+                                contentColor = MaterialTheme.colors.primary,
+                                disabledBackgroundColor = MaterialTheme.colors.background,
+                                disabledContentColor = MaterialTheme.colors.secondary
+                            ),
+                            modifier = Modifier.height(42.dp)
+                        ) {
+                            Text(
+                                text = "Обновить",
+                                fontSize = 14.sp,
+                                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                fontWeight = FontWeight.Medium,
+                            )
+                        }
                     }
                 }
             }

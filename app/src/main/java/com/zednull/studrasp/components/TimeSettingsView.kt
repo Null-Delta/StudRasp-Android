@@ -1,5 +1,6 @@
 package com.zednull.studrasp.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +13,8 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -86,82 +89,233 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                     )
 
                     Row() {
+
                         Spacer(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f, true))
-                        InputEditText(
-                            value = selectedTimeH.value,
-                            onValueChange = {
-                                if(it.length > 2) {
-                                    selectedTimeH.value = it.removeRange(0, it.length - 2).filter { "1234567890".contains(it) }
-                                } else {
-                                    selectedTimeH.value = it.filter { "1234567890".contains(it) }
-                                }
+                        Box()
+                        {
+                            InputEditText(
+                                value = selectedTimeH.value,
+                                onValueChange = {
+                                    if (it.length >= 4)
+                                    {
+                                        selectedTimeH.value = ""
+                                    }
+                                    else if(it.length == 3) {
+                                        if (selectedTimeH.value[0] == selectedTimeH.value[1] && it[0] == selectedTimeH.value[1] && it[1] == selectedTimeH.value[1] && it[2] == selectedTimeH.value[1])
+                                        {
+                                            selectedTimeH.value = " "
+                                            selectedTimeH.value = (it[0].toString() + it[1].toString()).filter { "1234567890".contains(it) }
+                                        }
+                                        else if (selectedTimeH.value == (it[0].toString()+it[1].toString()).filter { "1234567890".contains(it) })
+                                            selectedTimeH.value = (it[1].toString()+it[2].toString()).filter { "1234567890".contains(it) }
+                                        else if (selectedTimeH.value == (it[0].toString()+it[2].toString()).filter { "1234567890".contains(it) })
+                                            selectedTimeH.value = (it[2].toString()+it[1].toString()).filter { "1234567890".contains(it) }
+                                        else if (selectedTimeH.value == (it[1].toString()+it[2].toString()).filter { "1234567890".contains(it) })
+                                            selectedTimeH.value = (it[2].toString()+it[0].toString()).filter { "1234567890".contains(it) }
+                                        else selectedTimeH.value = ""
+                                    }
+                                    else if (it.length == 2)
+                                    {
+                                        if (selectedTimeH.value == (it[0].toString()).filter { "1234567890".contains(it) })
+                                            selectedTimeH.value = it.filter { "1234567890".contains(it) }
+                                        else if (selectedTimeH.value == (it[1].toString()).filter { "1234567890".contains(it) })
+                                            selectedTimeH.value = (it[1].toString()+it[0].toString()).filter { "1234567890".contains(it) }
+                                        else
+                                            selectedTimeH.value = ""
+                                    }
+                                    else
+                                        selectedTimeH.value = it.filter { "1234567890".contains(it) };
+                                },
+                                placeHolderString = "",
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(48.dp)
+                                    .alpha(0.0f)
+                                    .background(
+                                        MaterialTheme.colors.onPrimary,
+                                        MaterialTheme.shapes.medium
+                                    )
+                                    .padding(8.dp, 0.dp, 8.dp, 0.dp),
+                                keyboardOptions = KeyboardOptions(
+                                    KeyboardCapitalization.None,
+                                    false,
+                                    KeyboardType.Number,
+                                    ImeAction.Default
+                                ),
+                                //enabled = false
+                            )
 
-                                if(selectedTimeH.value.isNotEmpty() && selectedTimeH.value.toInt() > 23) {
-                                    selectedTimeH.value = "23"
+                            Text(
+                                if (selectedTimeH.value.length == 2) {
+                                    if (selectedTimeH.value.toInt() >= 24)
+                                        "0"+selectedTimeH.value[1].toString()
+                                    else
+                                        selectedTimeH.value
                                 }
-                            },
-                            placeHolderString = "",
-                            modifier = Modifier
-                                .height(36.dp)
-                                .width(48.dp)
-                                .background(
-                                    MaterialTheme.colors.onPrimary,
-                                    MaterialTheme.shapes.medium
+                                else
+                                    if (selectedTimeH.value.length == 1)
+                                        "0"+selectedTimeH.value
+                                    else
+                                        "00",
+                                fontSize = 16.sp,
+                                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                                color =MaterialTheme.colors.primary,
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(48.dp)
+                                    .background(
+                                        MaterialTheme.colors.onPrimary,
+                                        MaterialTheme.shapes.medium
+                                    )
+                                    .padding(8.dp, 6.dp, 8.dp, 0.dp),
                                 )
-                                .padding(8.dp, 0.dp, 8.dp, 0.dp),
-                            keyboardOptions = KeyboardOptions(
-                                KeyboardCapitalization.None,
-                                false,
-                                KeyboardType.Number,
-                                ImeAction.Default
-                            ),
-                            //enabled = false
-                        )
-
+                        }
                         //Text(" : ")
                         Spacer(modifier = Modifier.width(8.dp))
+                        Box()
+                        {
+                            InputEditText(
+                                value = selectedTimeM.value,
+                                onValueChange = {
+                                    if (it.length >= 4) {
+                                        selectedTimeM.value = ""
+                                    } else if (it.length == 3) {
+                                        if (selectedTimeM.value[0] == selectedTimeM.value[1] && it[0] == selectedTimeM.value[1] && it[1] == selectedTimeM.value[1] && it[2] == selectedTimeM.value[1]) {
+                                            selectedTimeM.value = " "
+                                            selectedTimeM.value =
+                                                (it[0].toString() + it[1].toString()).filter {
+                                                    "1234567890".contains(it)
+                                                }
+                                        } else if (selectedTimeM.value == (it[0].toString() + it[1].toString()).filter {
+                                                "1234567890".contains(
+                                                    it
+                                                )
+                                            })
+                                            selectedTimeM.value =
+                                                (it[1].toString() + it[2].toString()).filter {
+                                                    "1234567890".contains(it)
+                                                }
+                                        else if (selectedTimeM.value == (it[0].toString() + it[2].toString()).filter {
+                                                "1234567890".contains(
+                                                    it
+                                                )
+                                            })
+                                            selectedTimeM.value =
+                                                (it[2].toString() + it[1].toString()).filter {
+                                                    "1234567890".contains(it)
+                                                }
+                                        else if (selectedTimeM.value == (it[1].toString() + it[2].toString()).filter {
+                                                "1234567890".contains(
+                                                    it
+                                                )
+                                            })
+                                            selectedTimeM.value =
+                                                (it[2].toString() + it[0].toString()).filter {
+                                                    "1234567890".contains(it)
+                                                }
+                                        else selectedTimeM.value = ""
+                                    } else if (it.length == 2) {
+                                        if (selectedTimeM.value == (it[0].toString()).filter {
+                                                "1234567890".contains(
+                                                    it
+                                                )
+                                            })
+                                            selectedTimeM.value =
+                                                it.filter { "1234567890".contains(it) }
+                                        else if (selectedTimeM.value == (it[1].toString()).filter {
+                                                "1234567890".contains(
+                                                    it
+                                                )
+                                            })
+                                            selectedTimeM.value =
+                                                (it[1].toString() + it[0].toString()).filter {
+                                                    "1234567890".contains(it)
+                                                }
+                                        else
+                                            selectedTimeM.value = ""
+                                    } else
+                                        selectedTimeM.value =
+                                            it.filter { "1234567890".contains(it) };
+                                },
+                                placeHolderString = "",
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(48.dp)
+                                    .alpha(0.0f)
+                                    .background(
+                                        MaterialTheme.colors.onPrimary,
+                                        MaterialTheme.shapes.medium
+                                    )
+                                    .padding(8.dp, 0.dp, 8.dp, 0.dp),
+                                keyboardOptions = KeyboardOptions(
+                                    KeyboardCapitalization.None,
+                                    false,
+                                    KeyboardType.Number,
+                                    ImeAction.Default
+                                ),
+                            )
 
-                        InputEditText(
-                            value = selectedTimeM.value,
-                            onValueChange = {
-                                if(it.length > 2) {
-                                    selectedTimeM.value = it.removeRange(0, it.length - 2).filter { "1234567890".contains(it) }
-                                } else {
-                                    selectedTimeM.value = it.filter { "1234567890".contains(it) }
+                            Text(
+                                if (selectedTimeM.value.length == 2) {
+                                    if (selectedTimeM.value.toInt() >= 60)
+                                        "0"+selectedTimeM.value[1].toString()
+                                    else
+                                        selectedTimeM.value
                                 }
-
-                                if(selectedTimeM.value.isNotEmpty() && selectedTimeM.value.toInt() > 59) {
-                                    selectedTimeM.value = "59"
-                                }
-                            },
-                            placeHolderString = "",
-                            modifier = Modifier
-                                .height(36.dp)
-                                .width(48.dp)
-                                .background(
-                                    MaterialTheme.colors.onPrimary,
-                                    MaterialTheme.shapes.medium
-                                )
-                                .padding(8.dp, 0.dp, 8.dp, 0.dp)
-                                .align(Alignment.CenterVertically),
-                            keyboardOptions = KeyboardOptions(
-                                KeyboardCapitalization.None,
-                                false,
-                                KeyboardType.Number,
-                                ImeAction.Default
-                            ),
-                        )
+                                else
+                                    if (selectedTimeM.value.length == 1)
+                                        "0"+selectedTimeM.value
+                                    else
+                                        "00",
+                                fontSize = 16.sp,
+                                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                                color =MaterialTheme.colors.primary,
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(48.dp)
+                                    .background(
+                                        MaterialTheme.colors.onPrimary,
+                                        MaterialTheme.shapes.medium
+                                    )
+                                    .padding(8.dp, 6.dp, 8.dp, 0.dp),
+                            )
+                        }
                         Spacer(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f, true))
+
+
+
                     }
                 }
             },
             confirmButton = {
                 TextButton(
                     onClick = {
+                        if (selectedTimeH.value.length == 2) {
+                            if (selectedTimeH.value.toInt() >= 24)
+                                selectedTimeH.value = "0"+selectedTimeH.value[1].toString()
+                        }
+                        else if (selectedTimeH.value.length == 1)
+                            selectedTimeH.value = "0"+selectedTimeH.value
+                        else
+                            selectedTimeH.value = "00"
+
+                        if (selectedTimeH.value.length == 2) {
+                            if (selectedTimeH.value.toInt() >= 60)
+                                selectedTimeH.value = "0"+selectedTimeH.value[1].toString()
+                        }
+                        else if (selectedTimeH.value.length == 1)
+                            selectedTimeH.value = "0"+selectedTimeH.value
+                        else
+                            selectedTimeH.value = "00"
+
                         if(selectedPart.value == 0) {
                             localTimes[selectedLesson.value].start = selectedTimeH.value.toInt() * 60 +
                                     selectedTimeM.value.toInt()
@@ -174,7 +328,8 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                     },
                     modifier = Modifier
                         .padding(0.dp, 8.dp, 0.dp, 8.dp),
-                    enabled = selectedTimeH.value.isNotEmpty() && selectedTimeM.value.isNotEmpty(),
+
+
 
                     ) {
                     Text("Сохранить",
@@ -182,8 +337,7 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                         fontFamily = MaterialTheme.typography.body1.fontFamily,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
-                        color = if(selectedTimeH.value.isNotEmpty() && selectedTimeM.value.isNotEmpty())
-                            MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+                        color = MaterialTheme.colors.primary
                     )
                 }
             },

@@ -76,16 +76,16 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                 Column() {
                     InputEditText(
                         value = "",
-                        onValueChange = {
-                            //inText.value = it
-                        },
-                        placeHolderString = "",
                         modifier = Modifier
                             .height(16.dp)
                             .fillMaxWidth()
                             //.background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
                             .padding(8.dp, 0.dp, 8.dp, 0.dp),
-                        enabled = false
+                        onValueChange = {
+                            //inText.value = it
+                        },
+                        placeHolderString = "",
+                        enabled = false,
                     )
 
                     Row() {
@@ -93,6 +93,7 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                         Spacer(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f, true))
+<<<<<<< Updated upstream
                         Box()
                         {
                             InputEditText(
@@ -286,6 +287,72 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                                     .padding(8.dp, 6.dp, 8.dp, 0.dp),
                             )
                         }
+=======
+                        InputEditText(
+                            value = selectedTimeH.value,
+                            modifier = Modifier
+                                .height(36.dp)
+                                .width(48.dp)
+                                .background(
+                                    MaterialTheme.colors.onPrimary,
+                                    MaterialTheme.shapes.medium
+                                )
+                                .padding(8.dp, 0.dp, 8.dp, 0.dp),
+                            onValueChange = {
+                                if(it.length > 2) {
+                                    selectedTimeH.value = it.removeRange(0, it.length - 2).filter { "1234567890".contains(it) }
+                                } else {
+                                    selectedTimeH.value = it.filter { "1234567890".contains(it) }
+                                }
+
+                                if(selectedTimeH.value.isNotEmpty() && selectedTimeH.value.toInt() > 23) {
+                                    selectedTimeH.value = "23"
+                                }
+                            },
+                            placeHolderString = "",
+                            keyboardOptions = KeyboardOptions(
+                                KeyboardCapitalization.None,
+                                false,
+                                KeyboardType.Number,
+                                ImeAction.Default
+                            ),
+                            //enabled = false
+                        )
+
+                        //Text(" : ")
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        InputEditText(
+                            value = selectedTimeM.value,
+                            modifier = Modifier
+                                .height(36.dp)
+                                .width(48.dp)
+                                .background(
+                                    MaterialTheme.colors.onPrimary,
+                                    MaterialTheme.shapes.medium
+                                )
+                                .padding(8.dp, 0.dp, 8.dp, 0.dp)
+                                .align(Alignment.CenterVertically),
+                            onValueChange = {
+                                if(it.length > 2) {
+                                    selectedTimeM.value = it.removeRange(0, it.length - 2).filter { "1234567890".contains(it) }
+                                } else {
+                                    selectedTimeM.value = it.filter { "1234567890".contains(it) }
+                                }
+
+                                if(selectedTimeM.value.isNotEmpty() && selectedTimeM.value.toInt() > 59) {
+                                    selectedTimeM.value = "59"
+                                }
+                            },
+                            placeHolderString = "",
+                            keyboardOptions = KeyboardOptions(
+                                KeyboardCapitalization.None,
+                                false,
+                                KeyboardType.Number,
+                                ImeAction.Default
+                            ),
+                        )
+>>>>>>> Stashed changes
                         Spacer(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f, true))

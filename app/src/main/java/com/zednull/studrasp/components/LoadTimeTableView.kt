@@ -16,9 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -82,29 +80,30 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            InputEditText(value = code.value, onValueChange = {
-                code.value = it
-            },
-            modifier = Modifier
-                .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
-                .fillMaxWidth()
-                .weight(1f, true)
-                .height(42.dp)
-                .padding(8.dp, 0.dp, 8.dp, 0.dp),
+            InputEditText(
+                value = code.value, modifier = Modifier
+                    .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
+                    .fillMaxWidth()
+                    .weight(1f, true)
+                    .height(42.dp)
+                    .padding(8.dp, 0.dp, 8.dp, 0.dp),
+                onValueChange = {
+                    code.value = it.filter { "1234567890".contains(it) }
+                },
+                placeHolderString = "Код",
+                maxLines = 1,
                 keyboardOptions = KeyboardOptions(
                     KeyboardCapitalization.None,
                     false,
-                    KeyboardType.Text,
+                    KeyboardType.Number,
                     ImeAction.Default
-                ),
-                maxLines = 1,
-                placeHolderString = "Код"
+                )
             )
             
             Spacer(modifier = Modifier.width(8.dp))
             
             TextButton(onClick = {
-                Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable_by_invite_code", "invite_code" to code.value))
+                Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to code.value))
                     .responseString { request, response, result ->
                         var request: requestStruct = Gson().fromJson(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
@@ -160,10 +159,12 @@ fun InputEditText(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     cursorColor: Color = MaterialTheme.colors.primary,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
+        visualTransformation = visualTransformation,
         modifier = modifier,
         textStyle = TextStyle(
             MaterialTheme.colors.primary, 16.sp, FontWeight.Medium,

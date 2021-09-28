@@ -13,9 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -182,15 +180,17 @@ fun RegistrationView(activity: RegistrationActivity, isLogining: Boolean) {
                 .padding(0.dp, 32.dp, 0.dp, 8.dp)
         )
 
-        InputEditText(value = login.value, onValueChange = {
-            login.value = it
-        },
+        InputEditText(
+            value = login.value,
             modifier = Modifier
                 .padding(0.dp, 0.dp, 0.dp, 16.dp)
                 .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
                 .fillMaxWidth()
                 .height(42.dp)
                 .padding(8.dp, 0.dp, 8.dp, 0.dp),
+            onValueChange = {
+                login.value = it
+            },
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 KeyboardCapitalization.None,
@@ -241,22 +241,25 @@ fun RegistrationView(activity: RegistrationActivity, isLogining: Boolean) {
                 .fillMaxWidth()
                 .padding(0.dp, 16.dp, 0.dp, 8.dp)
         )
-
-        InputEditText(value = password.value, onValueChange = {
-            password.value = it
-        },
+        InputEditText(
+            visualTransformation = PasswordVisualTransformation(),
+            value = password.value,
             modifier = Modifier
+                .padding(0.dp, 0.dp, 0.dp, 16.dp)
                 .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
                 .fillMaxWidth()
                 .height(42.dp)
                 .padding(8.dp, 0.dp, 8.dp, 0.dp),
+            onValueChange = {
+                password.value = it
+            },
+            maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 KeyboardCapitalization.None,
                 false,
                 KeyboardType.Password,
                 ImeAction.Default
             ),
-            maxLines = 1,
         )
 
         Text(
@@ -301,6 +304,6 @@ val passExt = """(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[0-9a-zA-Z!@#$-_%^&*]{8,}""".t
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview4() {
-    TimeTableTheme {
+    TimeTableTheme{
     }
 }

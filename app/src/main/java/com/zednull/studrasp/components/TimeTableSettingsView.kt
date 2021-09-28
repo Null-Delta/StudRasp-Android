@@ -93,14 +93,15 @@ fun TImeTableSettingsView(tables: MutableState<SavedTables>, navigation: NavHost
             modifier = Modifier.padding(16.dp,16.dp,16.dp,8.dp)
         )
 
-        InputEditText(value = name.value, onValueChange = {
-            name.value = it
-        }, modifier = Modifier
-            .fillMaxWidth()
-            .height(42.dp)
-            .padding(16.dp, 0.dp, 16.dp, 0.dp)
-            .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
-            .padding(8.dp, 0.dp, 8.dp, 0.dp)
+        InputEditText(
+            value = name.value, modifier = Modifier
+                .fillMaxWidth()
+                .height(42.dp)
+                .padding(16.dp, 0.dp, 16.dp, 0.dp)
+                .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
+                .padding(8.dp, 0.dp, 8.dp, 0.dp), onValueChange = {
+                    name.value = it
+                }
 
         )
 
@@ -113,15 +114,16 @@ fun TImeTableSettingsView(tables: MutableState<SavedTables>, navigation: NavHost
             modifier = Modifier.padding(16.dp,16.dp,16.dp,8.dp)
         )
 
-        InputEditText(value = firstWeek.value, onValueChange = {
-            firstWeek.value = it
-        }, modifier = Modifier
-            .fillMaxWidth()
-            //.weight(1f, true)
-            .height(42.dp)
-            .padding(16.dp, 0.dp, 16.dp, 0.dp)
-            .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
-            .padding(8.dp, 0.dp, 8.dp, 0.dp)
+        InputEditText(
+            value = firstWeek.value, modifier = Modifier
+                .fillMaxWidth()
+                //.weight(1f, true)
+                .height(42.dp)
+                .padding(16.dp, 0.dp, 16.dp, 0.dp)
+                .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
+                .padding(8.dp, 0.dp, 8.dp, 0.dp), onValueChange = {
+                    firstWeek.value = it
+                }
 
         )
 
@@ -134,15 +136,16 @@ fun TImeTableSettingsView(tables: MutableState<SavedTables>, navigation: NavHost
             modifier = Modifier.padding(16.dp,16.dp,16.dp,8.dp)
         )
 
-        InputEditText(value = secondWeek.value, onValueChange = {
-            secondWeek.value = it
-        }, modifier = Modifier
-            .fillMaxWidth()
-            //.weight(1f, true)
-            .height(42.dp)
-            .padding(16.dp, 0.dp, 16.dp, 0.dp)
-            .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
-            .padding(8.dp, 0.dp, 8.dp, 0.dp)
+        InputEditText(
+            value = secondWeek.value, modifier = Modifier
+                .fillMaxWidth()
+                //.weight(1f, true)
+                .height(42.dp)
+                .padding(16.dp, 0.dp, 16.dp, 0.dp)
+                .background(MaterialTheme.colors.secondary, MaterialTheme.shapes.medium)
+                .padding(8.dp, 0.dp, 8.dp, 0.dp), onValueChange = {
+                    secondWeek.value = it
+                }
 
         )
 

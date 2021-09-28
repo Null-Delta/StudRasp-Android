@@ -5,8 +5,6 @@ import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -62,25 +60,25 @@ fun PartInput(
             ) {
                 InputEditText(
                     value = "",
+                    modifier = Modifier
+                        .height(16.dp)
+                        .padding(8.dp,0.dp,8.dp,0.dp),
                     onValueChange = {
 
                     },
                     placeHolderString = "",
-                    modifier = Modifier
-                        .height(16.dp)
-                        .padding(8.dp, 0.dp, 8.dp, 0.dp),
                     enabled = false
                 )
                 InputEditText(
                     value = inText.value,
-                    onValueChange = {
-                        inText.value = it
-                    },
-                    placeHolderString = "Введите название",
                     modifier = Modifier
                         .height(42.dp)
                         .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
-                        .padding(8.dp, 0.dp, 8.dp, 0.dp)
+                        .padding(8.dp,0.dp,8.dp,0.dp),
+                    onValueChange = {
+                        inText.value = it
+                    },
+                    placeHolderString = "Введите название"
                 )
             }
         },
@@ -136,11 +134,10 @@ fun DrawVariant(
     navigation: NavHostController,
     arrayOfParts: MutableState<MutableList<String>>,
     context: Context,
-    typeOfPart: Int,
-    onTap: () -> (Unit) = {},
-    onDelete: () -> Unit = {}
+    typeOfPart: Int
 )
 {
+    val isPressed = remember { mutableStateOf(false) }
     Row (
         modifier = Modifier
             .padding(16.dp, 0.dp, 16.dp, 9.dp)
@@ -152,9 +149,19 @@ fun DrawVariant(
             )
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = {
-                        onTap()
-                    }
+                    onPress = {
+                        val pressStartTime = System.currentTimeMillis()
+                        isPressed.value = true
+                        this.tryAwaitRelease()
+                        val pressEndTime = System.currentTimeMillis()
+                        val totalPressTime = pressEndTime - pressStartTime
+                        if (totalPressTime < 200) {
+                            //выбор названия
+                            loadTable.value = namePart
+                            navigation.popBackStack()
+                        }
+                        isPressed.value = false
+                    },
                 )
             }
     )
@@ -162,9 +169,7 @@ fun DrawVariant(
 
         Box(
             contentAlignment = Alignment.CenterStart,
-            modifier = Modifier
-                .height(36.dp)
-                .padding(8.dp, 0.dp, 8.dp, 0.dp)
+            modifier = Modifier.height(36.dp).padding(8.dp,0.dp,8.dp,0.dp)
         ) {
             Text(
                 text = namePart,
@@ -184,7 +189,12 @@ fun DrawVariant(
 
         IconButton(
             onClick = {
-                onDelete()
+                if (loadTable.value == namePart)
+                    loadTable.value = ""
+                arrayOfParts.value = arrayOfParts.value.filter { it != namePart }.toMutableList()
+                var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                editor.putString("partsNum" + typeOfPart.toString(), Gson().toJson(arrayOfParts.value))
+                editor.apply()
             },
             modifier = Modifier
                 .height(36.dp)
@@ -224,18 +234,14 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
                 .getString("partsNum" + typeOfPart.toString(), ""), mutableListOf<String>()::class.java)
         )
     }
-
-
     if (arrayOfParts.value == null)
         arrayOfParts.value = mutableListOf<String>()
-
-    var localArray = arrayOfParts.value.toMutableStateList()
 
     Column(
 
         modifier = Modifier
             .fillMaxSize()
-            //.verticalScroll(rememberScrollState(), true, null, false)
+            .verticalScroll(rememberScrollState(), true, null, false)
 
     ) {
         Row(
@@ -284,25 +290,9 @@ fun LoadListOfPartsView(navigation: NavHostController, loadTable: MutableState<S
             color = MaterialTheme.colors.primary
         )
 
-        LazyColumn() {
-            items(localArray) {v ->
-                DrawVariant(v, loadTable, navigation, arrayOfParts, context, typeOfPart, {
-                    loadTable.value = arrayOfParts.value[localArray.indexOfFirst {
-                        it == v
-                    }]
-                    navigation.popBackStack()
-                }, {
-                    arrayOfParts.value.removeAll {
-                        it == arrayOfParts.value[localArray.indexOfFirst {
-                            it == v
-                        }]
-                    }
-                    localArray.remove(v);
-                    var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
-                    editor.putString("partsNum" + typeOfPart.toString(), Gson().toJson(arrayOfParts.value))
-                    editor.apply()
-                })
-            }
+        for (part in arrayOfParts.value)
+        {
+            DrawVariant(part, loadTable, navigation, arrayOfParts, context, typeOfPart)
         }
 
         Spacer(

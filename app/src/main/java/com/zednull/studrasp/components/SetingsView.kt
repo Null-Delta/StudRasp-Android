@@ -61,7 +61,7 @@ fun SettingsView(navController: NavController) {
         )
 
         Text(
-            text = "v0.9.61 (beta)",
+            text = "v1.0 (beta)",
             fontSize = 16.sp,
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Bold,
@@ -112,7 +112,7 @@ fun SettingsView(navController: NavController) {
     }
 }
 
-@ExperimentalPagerApi
+@OptIn(ExperimentalPagerApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>) {

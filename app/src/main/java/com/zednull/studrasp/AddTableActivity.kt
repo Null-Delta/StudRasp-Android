@@ -88,7 +88,7 @@ fun AddTableView(code: String,act: Activity) {
         }
     }
 
-    Column {
+    Column() {
         if(!isLoad.value) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -105,7 +105,9 @@ fun AddTableView(code: String,act: Activity) {
             }
         } else {
             Box {
-                Column {
+                Column(
+                    modifier = Modifier.padding(0.dp,0.dp,0.dp,60.dp)
+                ) {
                     Row(
                         Modifier.padding(16.dp)
                     ) {

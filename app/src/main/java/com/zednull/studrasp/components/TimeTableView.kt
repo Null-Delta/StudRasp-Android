@@ -6,12 +6,15 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -81,54 +84,30 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
         ) {
             Row(
                 modifier = Modifier
-                    .padding(16.dp,16.dp,16.dp,16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Расписание",
-                    fontSize = 32.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier.wrapContentHeight()
-                )
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, true))
-            }
-
-            Row(
-                modifier = Modifier
-                    .padding(16.dp,0.dp,16.dp,16.dp)
-                    .height(42.dp),
+                    .padding(16.dp,16.dp,16.dp,16.dp)
+                    .height(48.dp),
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.height(42.dp)
+                    modifier = Modifier.height(48.dp)
                 ) {
-                    TextButton(
-                        onClick = {
-                            Log.i("check","here")
-                            loadRequest.launch(Intent(context, LoadTimeTableActivity::class.java))
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Transparent,
-                            contentColor = MaterialTheme.colors.primary,
-                            disabledBackgroundColor = MaterialTheme.colors.background,
-                            disabledContentColor = MaterialTheme.colors.secondary
-                        ),
-                    ) {
-                        Text(
-
-                            text = if ( timeTable.value.name != "")
-                                timeTable.value.name
-                            else
-                                "Выбрать",
-                            fontSize = 20.sp,
-                            fontFamily = MaterialTheme.typography.body1.fontFamily,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
+                    Text(
+                        text = if ( timeTable.value.name != "")
+                            timeTable.value.name
+                        else
+                            "Выбрать",
+                        fontSize = 24.sp,
+                        color = MaterialTheme.colors.primary,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = {
+                                    loadRequest.launch(Intent(context, LoadTimeTableActivity::class.java))
+                                }
+                            )
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier
@@ -138,39 +117,34 @@ fun TimeTableView(date: Date, timeTable: MutableState<TimeTableStructure>, selec
                 if(timeTable.value.name != "") {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.height(42.dp)
+                        modifier = Modifier.height(48.dp)
                     ) {
-                        TextButton(
-                            onClick = {
-                                Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to timeTable.value.TableID.toString()))
-                                    .responseString { _, _, result ->
-                                        val request: requestStruct = Gson().fromJson(result.get(),
-                                            requestStruct::class.java)
-                                        if(request.error.code == 0) {
-                                            timeTable.value = request.timetable!!.json!!
-                                            timeTable.value.TableID = request.timetable!!.id
-                                            context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
-                                            val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
-                                            editor.putString("timetable", Gson().toJson(timeTable.value))
-                                            editor.apply()
-                                        }
+                        Text(
+                            text = "Обновить",
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colors.primary,
+                            fontFamily = MaterialTheme.typography.body1.fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = {
+                                        Fuel.post("https://$mainDomain/main.php", listOf("action" to "get_timetable", "id" to timeTable.value.TableID.toString()))
+                                            .responseString { _, _, result ->
+                                                val request: requestStruct = Gson().fromJson(result.get(),
+                                                    requestStruct::class.java)
+                                                if(request.error.code == 0) {
+                                                    timeTable.value = request.timetable!!.json!!
+                                                    timeTable.value.TableID = request.timetable!!.id
+                                                    context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
+                                                    val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                                                    editor.putString("timetable", Gson().toJson(timeTable.value))
+                                                    editor.apply()
+                                                }
+                                            }
                                     }
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = MaterialTheme.colors.primary,
-                                disabledBackgroundColor = MaterialTheme.colors.background,
-                                disabledContentColor = MaterialTheme.colors.secondary
-                            ),
-                            modifier = Modifier.height(42.dp)
-                        ) {
-                            Text(
-                                text = "Обновить",
-                                fontSize = 14.sp,
-                                fontFamily = MaterialTheme.typography.body1.fontFamily,
-                                fontWeight = FontWeight.Medium,
-                            )
-                        }
+                                )
+                            }
+                        )
                     }
                 }
             }

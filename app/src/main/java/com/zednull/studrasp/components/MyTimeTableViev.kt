@@ -556,7 +556,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             textAlign = TextAlign.Left,
-                            color = MaterialTheme.colors.primary
+                            color = MaterialTheme.colors.onSecondary
                         )
                     }
 
@@ -719,7 +719,7 @@ fun MyTimeTableView(navigation: NavHostController, user: MutableState<user>, tab
                         .padding(16.dp, 22.dp, 16.dp, 11.dp)
                         .fillMaxWidth(),
                     textAlign = TextAlign.Left,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.onSecondary
                 )
             }
 

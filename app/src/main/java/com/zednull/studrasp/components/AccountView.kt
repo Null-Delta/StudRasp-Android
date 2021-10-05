@@ -244,7 +244,7 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
                 navigation.navigate("emailAdd" )
             },
                 modifier = Modifier
-                    .padding(16.dp,16.dp,16.dp,32.dp)
+                    .padding(16.dp,0.dp,16.dp,32.dp)
                     .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
                     .fillMaxWidth()
                     .height(42.dp)

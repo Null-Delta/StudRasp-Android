@@ -148,7 +148,7 @@ fun RegistrationView(activity: RegistrationActivity, isLogining: Boolean) {
                                 val data = Intent()
                                 data.putExtra("login", login.value)
                                 data.putExtra("session", request.session!!)
-                                data.putExtra("email", request.email!!)
+                                data.putExtra("email", email.value)
                                 activity.setResult(10, data)
                                 activity.finish()
                             }

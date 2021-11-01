@@ -56,7 +56,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
     val context = LocalContext.current
     val menu = remember { mutableStateOf(0) }
     var code = remember { mutableStateOf(loadCode) }
-
+    var localTableSelected = remember { mutableStateOf(emptyTimeTable) }
 
     val navController = rememberNavController()
 
@@ -67,7 +67,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
             )), TimeTableStructure::class.java)
         )
     }
-
+    
     val loadRequest = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -88,6 +88,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
         if(code.value != "") {
             var intent = Intent(context, AddTableActivity::class.java)
             intent.putExtra("code", code.value)
+            intent.putExtra("table", Gson().toJson(localTableSelected.value))
             loadRequest.launch(intent)
             code.value = ""
         }
@@ -96,7 +97,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
     Scaffold(
         bottomBar = { bottomBar(navController = navController, menu = menu) }
     ) {
-        Navigation(navController = navController, date, savedTimeTable, selectedDay, it, code)
+        Navigation(navController = navController, date, savedTimeTable, selectedDay, it, code, localTableSelected)
     }
 }
 
@@ -104,7 +105,14 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
 @ExperimentalPagerApi
 @OptIn(InternalCoroutinesApi::class)
 @Composable
-fun Navigation(navController: NavHostController, date: Date, table: MutableState<TimeTableStructure>, day: MutableState<Int>, paddingValues: PaddingValues, code: MutableState<String>) {
+fun Navigation(
+    navController: NavHostController,
+    date: Date,
+    table: MutableState<TimeTableStructure>,
+    day: MutableState<Int>,
+    paddingValues: PaddingValues,
+    code: MutableState<String>,
+    localTable: MutableState<TimeTableStructure>) {
     NavHost(navController, startDestination = "home") {
         composable("home") {
 
@@ -131,13 +139,16 @@ fun Navigation(navController: NavHostController, date: Date, table: MutableState
             }
         }
         composable("settings") {
-            SettingsNavigation(paddingValues, code)
+            SettingsNavigation(paddingValues, code, localTable, table)
         }
     }
 }
 
 @Composable
-fun bottomBar(navController: NavController, menu: MutableState<Int>) {
+fun bottomBar(
+    navController: NavController,
+    menu: MutableState<Int>
+) {
     Box() {
 
         BottomNavigation(

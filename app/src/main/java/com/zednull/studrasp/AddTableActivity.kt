@@ -22,6 +22,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.studrasp.components.TimeTable
 import com.zednull.studrasp.components.WeekView
+import com.zednull.studrasp.structure.TimeTableStructure
 import com.zednull.studrasp.structure.emptyTimeTable
 import com.zednull.studrasp.structure.mainDomain
 import com.zednull.studrasp.structure.requestStruct
@@ -39,7 +40,7 @@ class AddTableActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AddTableView(intent.getStringExtra("code")!!, this)
+                    AddTableView(intent.getStringExtra("code")!!, this, Gson().fromJson(intent.getStringExtra("table"), TimeTableStructure::class.java))
                 }
             }
         }
@@ -49,9 +50,9 @@ class AddTableActivity : ComponentActivity() {
 @ExperimentalPagerApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddTableView(code: String,act: Activity) {
+fun AddTableView(code: String,act: Activity, table: TimeTableStructure = emptyTimeTable) {
     var isLoad = remember { mutableStateOf(false) }
-    var loadedTable = remember { mutableStateOf(emptyTimeTable) }
+    var loadedTable = remember { mutableStateOf(table) }
     var selectedDay = remember { mutableStateOf(0)}
 
     val systemController = rememberSystemUiController()
@@ -70,6 +71,10 @@ fun AddTableView(code: String,act: Activity) {
     var pagerState = rememberPagerState(7,0,0f,7,false)
 
     LaunchedEffect(key1 = isLoad.value) {
+        if(loadedTable.value != emptyTimeTable) {
+            isLoad.value = true
+        }
+
         if(!isLoad.value) {
             Fuel.post("https://${mainDomain}/main.php",
             listOf(

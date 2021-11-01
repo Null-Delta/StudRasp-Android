@@ -107,12 +107,12 @@ fun LoadTimeTableView(loadTable: MutableState<TimeTableStructure>) {
                     .responseString { request, response, result ->
                         var request: requestStruct = Gson().fromJson(result.get(),requestStruct::class.java)
                         if(request.error.code != 0) {
-
                             errorText.value = request.error.message
                             isErrorShow.value = true
                         } else {
                             loadTable.value = request.timetable!!.json!!
                             loadTable.value.TableID = request.timetable!!.id
+                            loadTable.value.invite_code = code.value
                         }
                     }
             },

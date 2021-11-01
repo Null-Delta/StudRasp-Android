@@ -4,13 +4,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.DecayAnimation
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -149,6 +146,9 @@ fun TimeTable(
                     result.data!!.extras!!.getString("type", ""),
                     selectedLesson.value
                 ))
+
+                it.sortWith { l1, l2 -> if(l1.lessonNumber > l2.lessonNumber) 1 else -1 }
+
             }
         }
     }

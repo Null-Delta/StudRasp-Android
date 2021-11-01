@@ -221,26 +221,6 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
             )
 
             TextButton(onClick = {
-                navigation.navigate("myTimeTable" )
-            },
-                modifier = Modifier
-                    .padding(16.dp,16.dp,16.dp,32.dp)
-                    .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
-                    .fillMaxWidth()
-                    .height(42.dp)
-            ) {
-                Text(
-                    text = "Мои расписания",
-                    fontSize = 14.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colors.primary,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            TextButton(onClick = {
                 navigation.navigate("emailAdd" )
             },
                 modifier = Modifier

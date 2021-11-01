@@ -90,6 +90,26 @@ fun SettingsView(navController: NavController) {
         }
 
         TextButton(onClick = {
+            navController.navigate("myTimeTable")
+        },
+            modifier = Modifier
+                .padding(16.dp, 0.dp, 16.dp, 32.dp)
+                .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
+                .fillMaxWidth()
+                .height(42.dp)
+        ) {
+            Text(
+                text = "Мои расписания",
+                fontSize = 14.sp,
+                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colors.primary,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        TextButton(onClick = {
 
         },
             modifier = Modifier
@@ -115,7 +135,7 @@ fun SettingsView(navController: NavController) {
 @OptIn(ExperimentalPagerApi::class)
 @ExperimentalMaterialApi
 @Composable
-fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>) {
+fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>, localTable: MutableState<TimeTableStructure>, selectedTable: MutableState<TimeTableStructure>) {
     val navController = rememberNavController()
 
     var context = LocalContext.current
@@ -168,13 +188,13 @@ fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>)
             AccountView(navController, user)
         }
         composable("myTimeTable") {
-            MyTimeTableView(navController, user, tables, code)
+            MyTimeTableView(navController, user, tables, code, localTable)
         }
         composable("emailAdd") {
             EmailAddView(navController, user)
         }
         composable("editor") {
-            EditorView(navController, tables, paddingValues)
+            EditorView(navController, tables, paddingValues, selectedTable)
         }
         composable("editor_settings") {
             TImeTableSettingsView(tables, navController)

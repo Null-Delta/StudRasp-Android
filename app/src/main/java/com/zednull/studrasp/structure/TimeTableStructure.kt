@@ -17,7 +17,7 @@ class Day(var lessons1: SnapshotStateList<Lesson> = listOf<Lesson>().toMutableSt
         return if(date.weekIndex() == 0) ( if(index == 0) lessons1 else lessons2) else ( if(index == 0) lessons2 else lessons1)
     }
 
-    fun changeLessons(date: Date, index: Int, action: (SnapshotStateList<Lesson>) -> Unit) {
+    fun changeLessons(date: Date, index: Int, action: (SnapshotStateList<Lesson>) -> Boolean) {
         if(date.weekIndex() != index) {
             action(lessons2)
         } else {
@@ -58,8 +58,7 @@ class TimeTableStructure(
     var secondWeek: String,
     var days: SnapshotStateList<Day>,
     var lessonsTime: SnapshotStateList<LessonTime>,
-    var TableID: Int,
-    var invite_code: String? = null) {
+    var TableID: Int) {
     fun getWeekName(date: Date, index: Int): String {
         return if(date.weekIndex() == 0) (if(index == 0) firstWeek else secondWeek) else (if(index == 0) secondWeek else firstWeek)
     }

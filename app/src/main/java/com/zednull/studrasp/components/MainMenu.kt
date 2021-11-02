@@ -1,12 +1,8 @@
 package com.zednull.studrasp.components
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.ACTION_SEND
 import android.content.SharedPreferences
-import android.net.Uri
-import android.os.Environment
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,37 +21,24 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.zednull.studrasp.R
+import com.zednull.studrasp.structure.emptyTimeTable
+import com.zednull.studrasp.ui.theme.TimeTableTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.studrasp.AddTableActivity
-import com.zednull.studrasp.R
 import com.zednull.studrasp.structure.TimeTableStructure
-import com.zednull.studrasp.structure.emptyTimeTable
-import com.zednull.studrasp.ui.theme.TimeTableTheme
 import kotlinx.coroutines.InternalCoroutinesApi
-import java.io.File
 import java.util.*
-import java.io.FileOutputStream
-import com.zednull.studrasp.BuildConfig
-
-import com.zednull.studrasp.MainActivity
-
-import androidx.core.content.FileProvider
-
-
-
-
-
-
 
 
 @ExperimentalMaterialApi
 @InternalCoroutinesApi
 @ExperimentalPagerApi
 @Composable
-fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String, activity: Activity?) {
+fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String) {
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
@@ -73,7 +56,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String, activ
     val context = LocalContext.current
     val menu = remember { mutableStateOf(0) }
     var code = remember { mutableStateOf(loadCode) }
-    var localTableSelected = remember { mutableStateOf(emptyTimeTable) }
+
 
     val navController = rememberNavController()
 
@@ -101,52 +84,10 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String, activ
         }
     }
 
-    val shareRequest = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-
-    }
-
-    var shareTable = remember { mutableStateOf(emptyTimeTable) }
-
-    LaunchedEffect(key1 = shareTable.value) {
-        if(shareTable.value.name != "") {
-            val textfile = File(activity!!.cacheDir,"${shareTable.value.name}.studrasp")
-            textfile.createNewFile()
-
-            val fos = FileOutputStream(textfile)
-            fos.write(Gson().toJson(shareTable.value).toByteArray())
-            fos.flush()
-            fos.close()
-            val uri = Uri.fromFile(textfile)
-
-            val uri2 = FileProvider.getUriForFile(
-                context,
-                BuildConfig.APPLICATION_ID + ".provider",
-                textfile
-            )
-
-            val sendIntent: Intent = Intent().apply {
-                action = ACTION_SEND
-                putExtra(Intent.EXTRA_STREAM, uri2)
-                type = "text/plain"
-            }
-
-            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-
-            shareRequest.launch(shareIntent)
-            shareTable.value = emptyTimeTable
-        }
-    }
-    //intent.putExtra()
-
     LaunchedEffect(key1 = code.value) {
         if(code.value != "") {
             var intent = Intent(context, AddTableActivity::class.java)
             intent.putExtra("code", code.value)
-            intent.putExtra("table", Gson().toJson(localTableSelected.value))
             loadRequest.launch(intent)
             code.value = ""
         }
@@ -155,7 +96,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String, activ
     Scaffold(
         bottomBar = { bottomBar(navController = navController, menu = menu) }
     ) {
-        Navigation(navController = navController, date, savedTimeTable, selectedDay, it, code, localTableSelected, shareTable)
+        Navigation(navController = navController, date, savedTimeTable, selectedDay, it, code)
     }
 }
 
@@ -163,15 +104,7 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String, activ
 @ExperimentalPagerApi
 @OptIn(InternalCoroutinesApi::class)
 @Composable
-fun Navigation(
-    navController: NavHostController,
-    date: Date,
-    table: MutableState<TimeTableStructure>,
-    day: MutableState<Int>,
-    paddingValues: PaddingValues,
-    code: MutableState<String>,
-    localTable: MutableState<TimeTableStructure>,
-    shareTable: MutableState<TimeTableStructure>) {
+fun Navigation(navController: NavHostController, date: Date, table: MutableState<TimeTableStructure>, day: MutableState<Int>, paddingValues: PaddingValues, code: MutableState<String>) {
     NavHost(navController, startDestination = "home") {
         composable("home") {
 
@@ -185,7 +118,7 @@ fun Navigation(
                     .fillMaxSize()
                     .padding(paddingValues = paddingValues)
             ) {
-                TimeTableView(date, table, pagerState, paddingValues, shareTable)
+                TimeTableView(date, table, pagerState, paddingValues)
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -198,16 +131,13 @@ fun Navigation(
             }
         }
         composable("settings") {
-            SettingsNavigation(paddingValues, code, localTable, table, shareTable)
+            SettingsNavigation(paddingValues, code)
         }
     }
 }
 
 @Composable
-fun bottomBar(
-    navController: NavController,
-    menu: MutableState<Int>
-) {
+fun bottomBar(navController: NavController, menu: MutableState<Int>) {
     Box() {
 
         BottomNavigation(
@@ -281,6 +211,6 @@ fun bottomBar(
 fun DefaultPreview2() {
     val state = remember { mutableStateOf(2) }
     TimeTableTheme {
-        MainMenu(Date(), state, "", null)
+        MainMenu(Date(), state, "")
     }
 }

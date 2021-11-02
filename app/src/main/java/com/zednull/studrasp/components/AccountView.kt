@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
-import com.zednull.studrasp.R
 import com.zednull.studrasp.RegistrationActivity
 import com.zednull.studrasp.structure.user
 import com.zednull.studrasp.ui.theme.TimeTableTheme
@@ -120,17 +118,16 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
         Row(
             Modifier.padding(16.dp)
         ) {
-            IconButton(onClick = {
+            TextButton(onClick = {
                 navigation.popBackStack()
             },
-                modifier = Modifier
-                .height(48.dp)
-                .width(48.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.back_btn),
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                Text(
+                    text = "Назад",
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colors.primary
                 )
             }
 
@@ -224,10 +221,30 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
             )
 
             TextButton(onClick = {
+                navigation.navigate("myTimeTable" )
+            },
+                modifier = Modifier
+                    .padding(16.dp,16.dp,16.dp,32.dp)
+                    .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
+                    .fillMaxWidth()
+                    .height(42.dp)
+            ) {
+                Text(
+                    text = "Мои расписания",
+                    fontSize = 14.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colors.primary,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            TextButton(onClick = {
                 navigation.navigate("emailAdd" )
             },
                 modifier = Modifier
-                    .padding(16.dp,0.dp,16.dp,32.dp)
+                    .padding(16.dp,16.dp,16.dp,32.dp)
                     .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
                     .fillMaxWidth()
                     .height(42.dp)

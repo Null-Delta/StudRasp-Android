@@ -3,12 +3,13 @@ package com.zednull.studrasp.components
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import com.github.kittinunf.fuel.Fuel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
-import com.zednull.studrasp.R
 import com.zednull.studrasp.structure.mainDomain
 import com.zednull.studrasp.structure.requestStruct
 import com.zednull.studrasp.structure.user
@@ -103,18 +103,17 @@ fun EmailAddView(navigation: NavHostController, user: MutableState<user>) {
                 .padding(16.dp, 16.dp, 16.dp, 13.dp)
                 .fillMaxWidth()
         ) {
-            IconButton(
+            TextButton(
                 onClick = {
                     navigation.popBackStack()
                 },
-                modifier = Modifier
-                    .height(48.dp)
-                    .width(48.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.back_btn),
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                Text(
+                    text = "Назад",
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colors.primary
                 )
             }
 

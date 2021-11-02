@@ -3,7 +3,6 @@
     package="com.zednull.studrasp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +16,8 @@
             android:exported="true"
             android:theme="@style/Theme.TimeTable">
 
+            <!--below is the same filter as above just the scheme is changed to http -->
+            <!--so we can open our app with the url starting with https and http as well-->
         </activity>
         <activity
             android:name="com.zednull.studrasp.AccountActivity"
@@ -64,16 +65,6 @@
             android:name="com.zednull.studrasp.RegistrationActivity"
             android:exported="true"
             android:theme="@style/Theme.TimeTable" />
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
-        </provider>
     </application>
 
 </manifest>

@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
+import com.zednull.studrasp.R
 import com.zednull.studrasp.RegistrationActivity
 import com.zednull.studrasp.structure.user
 import com.zednull.studrasp.ui.theme.TimeTableTheme
@@ -118,16 +120,17 @@ fun AccountView(navigation: NavHostController, user: MutableState<user>) {
         Row(
             Modifier.padding(16.dp)
         ) {
-            TextButton(onClick = {
+            IconButton(onClick = {
                 navigation.popBackStack()
             },
+                modifier = Modifier
+                .height(48.dp)
+                .width(48.dp)
             ) {
-                Text(
-                    text = "Назад",
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colors.primary
+                Icon(
+                    painter = painterResource(id = R.drawable.back_btn),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
                 )
             }
 

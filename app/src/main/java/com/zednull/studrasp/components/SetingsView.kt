@@ -135,7 +135,12 @@ fun SettingsView(navController: NavController) {
 @OptIn(ExperimentalPagerApi::class)
 @ExperimentalMaterialApi
 @Composable
-fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>, localTable: MutableState<TimeTableStructure>, selectedTable: MutableState<TimeTableStructure>) {
+fun SettingsNavigation(
+    paddingValues: PaddingValues,
+    code: MutableState<String>,
+    localTable: MutableState<TimeTableStructure>,
+    selectedTable: MutableState<TimeTableStructure>,
+    shareTable: MutableState<TimeTableStructure>) {
     val navController = rememberNavController()
 
     var context = LocalContext.current
@@ -188,7 +193,7 @@ fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>,
             AccountView(navController, user)
         }
         composable("myTimeTable") {
-            MyTimeTableView(navController, user, tables, code, localTable)
+            MyTimeTableView(navController, user, tables, code, localTable, shareTable)
         }
         composable("emailAdd") {
             EmailAddView(navController, user)

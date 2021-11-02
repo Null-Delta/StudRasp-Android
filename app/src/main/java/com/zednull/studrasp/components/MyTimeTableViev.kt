@@ -123,7 +123,8 @@ fun DrawTable(
     onTap: () -> (Unit) = {},
     onChangesDelete: () -> (Unit) = {},
     onSet: () -> (Unit) = {},
-    onCopy: () -> (Unit) = {})
+    onCopy: () -> (Unit) = {},
+    onLocalShare: () -> (Unit) = {})
 {
     val expan = remember { mutableStateOf(false) }
 
@@ -182,19 +183,17 @@ fun DrawTable(
                           onShare()
                 },
                 modifier = Modifier
-                    .width(36.dp)
-                    .height(36.dp)
+                    .width(48.dp)
+                    .height(48.dp)
                     .background(Color.Transparent, MaterialTheme.shapes.medium)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.upload),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primaryVariant
+                    tint = MaterialTheme.colors.primary
                 )
             }
         }
-
-
             Box(
                 modifier = Modifier
                     .width(36.dp)
@@ -224,7 +223,7 @@ fun DrawTable(
                     expanded = expan.value,
                     onDismissRequest = { expan.value = false }
                 ) {
-                    if (state == MyTimeTableState.local)
+                    if (state == MyTimeTableState.local) {
                         DropdownMenuItem(onClick = {
                             onShare()
                             expan.value = false
@@ -236,8 +235,23 @@ fun DrawTable(
                                 fontFamily = MaterialTheme.typography.body1.fontFamily,
                                 fontWeight = FontWeight.Medium,
                                 textAlign = TextAlign.Center,
-                                )
+                            )
                         }
+
+                        DropdownMenuItem(onClick = {
+                            onLocalShare()
+                            expan.value = false
+                        }) {
+                            Text(
+                                text = "Поделиться",
+                                color = MaterialTheme.colors.primary,
+                                fontSize = 16.sp,
+                                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
 
                         DropdownMenuItem(onClick = {
                             expan.value = false
@@ -252,6 +266,7 @@ fun DrawTable(
                                 textAlign = TextAlign.Center,
                             )
                         }
+
 
                     if(state == MyTimeTableState.global || state == MyTimeTableState.changed) {
                         DropdownMenuItem(onClick = {
@@ -319,7 +334,8 @@ fun MyTimeTableView(
     user: MutableState<user>,
     tables: MutableState<SavedTables>,
     code: MutableState<String>,
-    localTable: MutableState<TimeTableStructure>) {
+    localTable: MutableState<TimeTableStructure>,
+    shareTable: MutableState<TimeTableStructure>) {
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
@@ -336,6 +352,7 @@ fun MyTimeTableView(
         systemController.setNavigationBarColor(
             barColor,useDarkIcons
         )
+
         systemController.setStatusBarColor(
             barColor,useDarkIcons
         )
@@ -508,17 +525,18 @@ fun MyTimeTableView(
                 .padding(16.dp, 16.dp, 16.dp, 13.dp)
                 .fillMaxWidth()
         ) {
-            TextButton(
+            IconButton(
                 onClick = {
                     navigation.popBackStack()
                 },
+                Modifier
+                    .height(48.dp)
+                    .width(48.dp)
             ) {
-                Text(
-                    text = "Назад",
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colors.primary
+                Icon(
+                    painter = painterResource(id = R.drawable.back_btn),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
                 )
             }
 
@@ -528,7 +546,7 @@ fun MyTimeTableView(
                     .weight(1f, true)
             )
 
-            TextButton(
+            IconButton(
                 onClick = {
                     val tbl = emptyTimeTable
                     tbl.TableID = getNewLocalID(context)
@@ -536,13 +554,12 @@ fun MyTimeTableView(
                     tables.value.localTables.add(tbl)
                     tables.value.saveArray(MyTimeTableState.local, context)
                 },
-            ) {
-                Text(
-                    text = "Добавить",
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colors.primary
+                modifier = Modifier.height(36.dp).width(36.dp)
+            )  {
+                Icon(
+                    painter = painterResource(id = R.drawable.add_filled),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
                 )
             }
         }
@@ -799,6 +816,9 @@ fun MyTimeTableView(
                 }, onSet = {
                         localTable.value = it
                         code.value = "local"
+                },
+                onLocalShare = {
+                    shareTable.value = it
                 })
             }
         }

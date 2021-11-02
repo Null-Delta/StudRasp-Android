@@ -4,13 +4,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.DecayAnimation
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,12 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.*
-import com.zednull.studrasp.LoadListOfPartsActivity
-import com.zednull.studrasp.minutes
+import com.zednull.studrasp.*
 import com.zednull.studrasp.structure.Lesson
 import com.zednull.studrasp.structure.TimeTableStructure
-import com.zednull.studrasp.weekDayNum
-import com.zednull.studrasp.weekIndex
 import java.util.*
 
 
@@ -40,14 +34,10 @@ fun CardState(week: Int,index: Int, lesson: Int, table: TimeTableStructure, date
         return CardState.Highlight
     }
 
-    //if(lesson - 1 >= 0)
-        //Log.i("testa","${index} : ${lesson} ${getLastLesson(index, lesson, table, date, week)}")
-    //if(getLastLesson(index, lesson, table, date, week) > 1)
-        //Log.i("testa","${date.minutes()} , ${table.lessonsTime[lesson - 1].start} ${table.lessonsTime[getLastLesson(index, lesson, table, date, week) - 1].end}")
     return if(date.weekDayNum() - 1 != index) CardState.Highlight
     else if(date.minutes() < table.lessonsTime[lesson - 1].start && (
-                (table.days[index].getLessons(date, week).firstOrNull { it.lessonNumber < lesson } == null) || (date.minutes() > table.lessonsTime[
-                        getLastLesson(index, lesson, table, date, week) - 1
+                (table.days[index].getLessons(date, 0).firstOrNull { it.lessonNumber < lesson } == null) || (date.minutes() > table.lessonsTime[
+                        getLastLesson(index, lesson, table, date, 0) - 1
                 ].end)
             )) CardState.Wait
     else if(date.minutes() >= table.lessonsTime[lesson - 1].start && date.minutes() <= table.lessonsTime[lesson - 1].end) CardState.Active
@@ -56,11 +46,11 @@ fun CardState(week: Int,index: Int, lesson: Int, table: TimeTableStructure, date
 }
 
 fun getLastLesson(index: Int, lesson: Int, table: TimeTableStructure, date: Date, week: Int): Int {
-    var max = -1;
-    for (i in 0 until table.days[index].getLessons(date, week).size) {
-        if(table.days[index].getLessons(date, week)[i].lessonNumber > max &&
-            table.days[index].getLessons(date, week)[i].lessonNumber < lesson) {
-            max = table.days[index].getLessons(date, week)[i].lessonNumber
+    var max = -1
+    for (i in 0 until table.days[index].getLessons(date, 0).size) {
+        if(table.days[index].getLessons(date, 0)[i].lessonNumber > max &&
+            table.days[index].getLessons(date, 0)[i].lessonNumber < lesson) {
+            max = table.days[index].getLessons(date, 0)[i].lessonNumber
         }
     }
     return max
@@ -156,6 +146,9 @@ fun TimeTable(
                     result.data!!.extras!!.getString("type", ""),
                     selectedLesson.value
                 ))
+
+                it.sortWith { l1, l2 -> if(l1.lessonNumber > l2.lessonNumber) 1 else -1 }
+
             }
         }
     }

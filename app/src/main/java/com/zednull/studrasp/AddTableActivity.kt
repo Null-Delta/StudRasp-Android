@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,8 +21,10 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
+import com.zednull.studrasp.components.MyTimeTableState
 import com.zednull.studrasp.components.TimeTable
 import com.zednull.studrasp.components.WeekView
+import com.zednull.studrasp.structure.TimeTableStructure
 import com.zednull.studrasp.structure.emptyTimeTable
 import com.zednull.studrasp.structure.mainDomain
 import com.zednull.studrasp.structure.requestStruct
@@ -39,7 +42,7 @@ class AddTableActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AddTableView(intent.getStringExtra("code")!!, this)
+                    AddTableView(intent.getStringExtra("code")!!, this, Gson().fromJson(intent.getStringExtra("table"), TimeTableStructure::class.java))
                 }
             }
         }
@@ -49,9 +52,9 @@ class AddTableActivity : ComponentActivity() {
 @ExperimentalPagerApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddTableView(code: String,act: Activity) {
+fun AddTableView(code: String,act: Activity, table: TimeTableStructure = emptyTimeTable) {
     var isLoad = remember { mutableStateOf(false) }
-    var loadedTable = remember { mutableStateOf(emptyTimeTable) }
+    var loadedTable = remember { mutableStateOf(table) }
     var selectedDay = remember { mutableStateOf(0)}
 
     val systemController = rememberSystemUiController()
@@ -70,6 +73,10 @@ fun AddTableView(code: String,act: Activity) {
     var pagerState = rememberPagerState(7,0,0f,7,false)
 
     LaunchedEffect(key1 = isLoad.value) {
+        if(loadedTable.value != emptyTimeTable) {
+            isLoad.value = true
+        }
+
         if(!isLoad.value) {
             Fuel.post("https://${mainDomain}/main.php",
             listOf(
@@ -87,8 +94,7 @@ fun AddTableView(code: String,act: Activity) {
             }
         }
     }
-
-    Column {
+    Column() {
         if(!isLoad.value) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -105,21 +111,22 @@ fun AddTableView(code: String,act: Activity) {
             }
         } else {
             Box {
-                Column {
+                Column(
+                    modifier = Modifier.padding(0.dp,0.dp,0.dp,60.dp)
+                ) {
                     Row(
                         Modifier.padding(16.dp)
                     ) {
-                        TextButton(onClick = {
+                        IconButton(onClick = {
                             act.setResult(-1)
                             act.finish()
                         },
+                            modifier = Modifier.width(48.dp).height(48.dp)
                         ) {
-                            Text(
-                                text = "Назад",
-                                fontFamily = MaterialTheme.typography.body1.fontFamily,
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 20.sp,
-                                color = MaterialTheme.colors.primary
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_round_close_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.primary
                             )
                         }
 

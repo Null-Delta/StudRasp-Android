@@ -39,7 +39,8 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     MainMenu(date.value, selectedDay,
-                        if(intent.data != null) intent.data!!.lastPathSegment!! else ""
+                        if(intent.data != null) intent.data!!.lastPathSegment!! else "",
+                        this
                     )
                 }
             }
@@ -64,6 +65,6 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
     TimeTableTheme {
-        MainMenu(date = Date(), selectedDay = mutableStateOf(0), "")
+        MainMenu(date = Date(), selectedDay = mutableStateOf(0), "", null)
     }
 }

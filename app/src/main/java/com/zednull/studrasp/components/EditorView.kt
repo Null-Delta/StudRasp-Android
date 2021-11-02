@@ -1,5 +1,8 @@
 package com.zednull.studrasp.components
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -15,8 +18,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import com.google.gson.Gson
 import com.zednull.studrasp.R
 import com.zednull.studrasp.dayOfWeek
+import com.zednull.studrasp.structure.TimeTableStructure
+import com.zednull.studrasp.structure.emptyTimeTable
 import com.zednull.studrasp.ui.theme.TimeTableTheme
 import java.util.*
 
@@ -34,7 +40,11 @@ fun getTableName(tables: MutableState<SavedTables>): String {
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
-fun EditorView(navigation: NavHostController, tables: MutableState<SavedTables>, paddingValues: PaddingValues) {
+fun EditorView(
+    navigation: NavHostController,
+    tables: MutableState<SavedTables>,
+    paddingValues: PaddingValues,
+    mainTable: MutableState<TimeTableStructure>) {
     
     val selectedTable = remember { mutableStateOf(tables.value.selectedTable()) }
     val selectedDay = rememberPagerState(pageCount = 7,0,0f,7,false)
@@ -104,6 +114,17 @@ fun EditorView(navigation: NavHostController, tables: MutableState<SavedTables>,
                     IconButton(
                         onClick = {
                             tables.value.saveArray(tables.value.selectedType, context)
+                            if(tables.value.selectedID == selectedTable.value.TableID) {
+                                if(tables.value.selectedType == MyTimeTableState.local) {
+                                    mainTable.value = tables.value.localTables.first { t ->
+                                        t.TableID == selectedTable.value.TableID
+                                    }
+
+                                    val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                                    editor.putString("timetable", Gson().toJson(selectedTable.value))
+                                    editor.apply()
+                                }
+                            }
                             navigation.popBackStack()
                         },
                         modifier = Modifier

@@ -89,11 +89,10 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                     )
 
                     Row() {
-
                         Spacer(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f, true))
-                        
+
                         Box()
                         {
                             InputEditText(
@@ -291,9 +290,6 @@ fun TimeSettingsView(navigation: NavController, tables: MutableState<SavedTables
                         Spacer(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f, true))
-
-
-
                     }
                 }
             },

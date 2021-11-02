@@ -90,7 +90,31 @@ fun SettingsView(navController: NavController) {
         }
 
         TextButton(onClick = {
+<<<<<<< Updated upstream
 
+=======
+            navController.navigate("myTimeTable")
+        },
+            modifier = Modifier
+                .padding(16.dp, 0.dp, 16.dp, 32.dp)
+                .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
+                .fillMaxWidth()
+                .height(42.dp)
+        ) {
+            Text(
+                text = "Мои расписания",
+                fontSize = 14.sp,
+                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colors.primary,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        TextButton(onClick = {
+            navController.navigate("about")
+>>>>>>> Stashed changes
         },
             modifier = Modifier
                 .padding(16.dp, 0.dp, 16.dp, 32.dp)
@@ -181,6 +205,9 @@ fun SettingsNavigation(paddingValues: PaddingValues, code: MutableState<String>)
         }
         composable("time_settings") {
             TimeSettingsView(navController, tables)
+        }
+        composable("about") {
+            AboutView(navController)
         }
         
     }

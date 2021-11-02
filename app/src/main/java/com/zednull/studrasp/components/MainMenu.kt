@@ -1,12 +1,12 @@
 package com.zednull.studrasp.components
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
 import android.content.SharedPreferences
 import android.net.Uri
-import android.os.Environment
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -30,32 +32,60 @@ import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
 import com.zednull.studrasp.AddTableActivity
+import com.zednull.studrasp.BuildConfig
 import com.zednull.studrasp.R
 import com.zednull.studrasp.structure.TimeTableStructure
 import com.zednull.studrasp.structure.emptyTimeTable
 import com.zednull.studrasp.ui.theme.TimeTableTheme
 import kotlinx.coroutines.InternalCoroutinesApi
-import java.io.File
+import java.io.*
+import java.net.URI
 import java.util.*
-import java.io.FileOutputStream
-import com.zednull.studrasp.BuildConfig
-
-import com.zednull.studrasp.MainActivity
-
-import androidx.core.content.FileProvider
 
 
+fun readFile(path: Uri, context: Context): String? {
+    var myData = ""
 
+    val myExternalFile = File("file" + path.toString().removePrefix("content"))
 
+    Log.i("hey",myExternalFile.exists().toString())
+    Log.i("hey",path.toString())
 
+    var inp = context.contentResolver.openInputStream(path)!!
+    myData = inp.bufferedReader().readText()
 
+//    try {
+//        val fis = FileInputStream(myExternalFile)
+//        val `in` = DataInputStream(fis)
+//        val br = BufferedReader(InputStreamReader(`in`))
+//        var strLine: String
+//        while (br.readLine().also { strLine = it } != null) {
+//            myData = """
+//                $myData$strLine
+//
+//                """.trimIndent()
+//        }
+//        br.close()
+//        `in`.close()
+//        fis.close()
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//    }
+    return myData
+}
 
 
 @ExperimentalMaterialApi
 @InternalCoroutinesApi
 @ExperimentalPagerApi
 @Composable
-fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String, activity: Activity?) {
+fun MainMenu(
+    date: Date,
+    selectedDay: MutableState<Int>,
+    loadCode: String,
+    activity: Activity?,
+    filePath: Uri?
+) {
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
@@ -140,13 +170,20 @@ fun MainMenu(date: Date, selectedDay: MutableState<Int>, loadCode: String, activ
             shareTable.value = emptyTimeTable
         }
     }
-    //intent.putExtra()
 
     LaunchedEffect(key1 = code.value) {
         if(code.value != "") {
             var intent = Intent(context, AddTableActivity::class.java)
             intent.putExtra("code", code.value)
             intent.putExtra("table", Gson().toJson(localTableSelected.value))
+            loadRequest.launch(intent)
+            code.value = ""
+        } else if(filePath != null) {
+            //Log.i("hey!", "${readFile(filePath, context)!!}")
+            var intent = Intent(context, AddTableActivity::class.java)
+            intent.putExtra("code", "")
+            intent.putExtra("table", readFile(filePath, context)!!)
+            intent.putExtra("isImport", true)
             loadRequest.launch(intent)
             code.value = ""
         }
@@ -281,6 +318,6 @@ fun bottomBar(
 fun DefaultPreview2() {
     val state = remember { mutableStateOf(2) }
     TimeTableTheme {
-        MainMenu(Date(), state, "", null)
+        MainMenu(Date(), state, "", null, null)
     }
 }

@@ -1,15 +1,20 @@
 package com.zednull.studrasp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,9 +26,11 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zednull.studrasp.components.MyTimeTableState
 import com.zednull.studrasp.components.TimeTable
 import com.zednull.studrasp.components.WeekView
+import com.zednull.studrasp.components.getNewLocalID
 import com.zednull.studrasp.structure.TimeTableStructure
 import com.zednull.studrasp.structure.emptyTimeTable
 import com.zednull.studrasp.structure.mainDomain
@@ -35,6 +42,7 @@ class AddTableActivity : ComponentActivity() {
     @ExperimentalPagerApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Log.i("intent", "${intent.}")
         setContent {
             TimeTableTheme {
                 // A surface container using the 'background' color from the theme
@@ -42,7 +50,10 @@ class AddTableActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AddTableView(intent.getStringExtra("code")!!, this, Gson().fromJson(intent.getStringExtra("table"), TimeTableStructure::class.java))
+                    AddTableView(
+                        intent.getStringExtra("code")!!,
+                        this, Gson().fromJson(intent.getStringExtra("table"), TimeTableStructure::class.java),
+                    isImport = intent.getBooleanExtra("isImport", false))
                 }
             }
         }
@@ -52,7 +63,11 @@ class AddTableActivity : ComponentActivity() {
 @ExperimentalPagerApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddTableView(code: String,act: Activity, table: TimeTableStructure = emptyTimeTable) {
+fun AddTableView(
+    code: String,
+    act: Activity,
+    table: TimeTableStructure = emptyTimeTable,
+    isImport: Boolean = false) {
     var isLoad = remember { mutableStateOf(false) }
     var loadedTable = remember { mutableStateOf(table) }
     var selectedDay = remember { mutableStateOf(0)}
@@ -60,6 +75,7 @@ fun AddTableView(code: String,act: Activity, table: TimeTableStructure = emptyTi
     val systemController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     val barColor = MaterialTheme.colors.background
+    var context = LocalContext.current
 
     SideEffect {
         systemController.setNavigationBarColor(
@@ -135,6 +151,24 @@ fun AddTableView(code: String,act: Activity, table: TimeTableStructure = emptyTi
                             .weight(1f, true))
 
                         TextButton(onClick = {
+                            if(isImport) {
+                                loadedTable.value.TableID = getNewLocalID(context)
+                                var tables: SnapshotStateList<TimeTableStructure> =
+                                    Gson().fromJson(
+                                        context.getSharedPreferences(
+                                            "preferences",
+                                            Context.MODE_PRIVATE
+                                        ).getString(
+                                            "localTables",
+                                            Gson().toJson(List(0) { emptyTimeTable })
+                                        ), object : TypeToken<SnapshotStateList<TimeTableStructure>>() { }.type
+                                    )
+
+                                tables.add(loadedTable.value)
+                                context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                                    .putString("localTables", Gson().toJson(tables)).apply()
+                            }
+
                             val data = Intent()
                             data.putExtra("timetable",Gson().toJson(loadedTable.value))
                             act.setResult(1, data)

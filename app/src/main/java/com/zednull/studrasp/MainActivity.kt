@@ -2,6 +2,7 @@ package com.zednull.studrasp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
+        Log.i("flex", "${intent.data}")
+
         setContent {
 
             TimeTableTheme {
@@ -39,8 +43,9 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     MainMenu(date.value, selectedDay,
-                        if(intent.data != null) intent.data!!.lastPathSegment!! else "",
-                        this
+                        "",
+                        this,
+                        if(intent.data == null) null else intent.data!!
                     )
                 }
             }
@@ -65,6 +70,6 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
     TimeTableTheme {
-        MainMenu(date = Date(), selectedDay = mutableStateOf(0), "", null)
+        MainMenu(date = Date(), selectedDay = mutableStateOf(0), "", null, null)
     }
 }

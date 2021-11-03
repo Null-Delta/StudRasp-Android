@@ -12,6 +12,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +31,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zednull.studrasp.R
 import com.zednull.studrasp.structure.TimeTableStructure
 import com.zednull.studrasp.structure.mainDomain
@@ -193,6 +195,46 @@ fun TimeTableView(
                                 }) {
                                     Text(
                                         text = "Копировать код (${timeTable.value.invite_code!!})",
+                                        color = MaterialTheme.colors.primary,
+                                        fontSize = 16.sp,
+                                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                                        fontWeight = FontWeight.Medium,
+                                        textAlign = TextAlign.Center,
+                                    )
+                                }
+
+                                DropdownMenuItem(onClick = {
+                                    var pinnedTables: SnapshotStateList<PinnedTable> =
+                                        Gson().fromJson(
+                                            context.getSharedPreferences(
+                                                "preferences",
+                                                Context.MODE_PRIVATE
+                                            ).getString(
+                                                "pinnedTables",
+                                                Gson().toJson(List(0) { PinnedTable("","") })
+                                            ), object : TypeToken<SnapshotStateList<PinnedTable>>() { }.type
+                                        )
+
+                                    if(pinnedTables.firstOrNull { v ->
+                                            v.name == timeTable.value.name &&
+                                                    v.invite_code == timeTable.value.invite_code!!.lowercase()
+                                        } == null) {
+                                        pinnedTables.add(
+                                            PinnedTable(
+                                                timeTable.value.name,
+                                                timeTable.value.invite_code!!.lowercase()
+                                            )
+                                        )
+                                    }
+
+                                    var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                                    editor.putString("pinnedTables", Gson().toJson(pinnedTables))
+                                    editor.apply()
+
+                                    expan.value = false
+                                }) {
+                                    Text(
+                                        text = "Добавить в избранные",
                                         color = MaterialTheme.colors.primary,
                                         fontSize = 16.sp,
                                         fontFamily = MaterialTheme.typography.body1.fontFamily,

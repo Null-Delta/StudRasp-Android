@@ -1,37 +1,24 @@
 package com.zednull.studrasp.components
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.zednull.studrasp.R
-import com.zednull.studrasp.structure.TimeTableStructure
-import com.zednull.studrasp.structure.emptyTimeTable
-import com.zednull.studrasp.structure.user
 import com.zednull.studrasp.ui.theme.TimeTableTheme
 
 @Composable
@@ -40,94 +27,204 @@ fun AboutView(navController: NavController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
+            .verticalScroll(ScrollState(0), true, null, false)
+
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.appicon),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(0.dp, 32.dp, 0.dp, 0.dp)
-                .height(128.dp)
-                .width(128.dp)
-                .verticalScroll(ScrollState(0), true, null, false)
-        )
+        Row(modifier = Modifier
+            .padding(16.dp, 16.dp, 16.dp, 16.dp)
+            .fillMaxWidth()
+            .height(42.dp)
+        ) {
+            Text(
+                text = "О Приложении",
+                fontSize = 32.sp,
+                fontFamily = MaterialTheme.typography.body1.fontFamily,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.primary,
 
+                )
+        }
         Text(
-            text = "StudRasp",
-            fontSize = 24.sp,
-            fontFamily = MaterialTheme.typography.body1.fontFamily,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colors.primary,
-
-            )
-
-        Text(
-            text = "v1.0 (beta)",
+            text = "В очередной раз увидев, как деканат вывешивает новое распечатанное расписание на доску, мы поняли, что так жить больше нельзя.",
             fontSize = 16.sp,
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colors.onSecondary,
-            modifier = Modifier.padding(0.dp,0.dp,0.dp,32.dp)
+            color = MaterialTheme.colors.primary,
+            modifier = Modifier
+                .padding(16.dp, 16.dp, 16.dp, 16.dp)
+                .fillMaxWidth()
+            )
+
+        Text(
+            text = "Это стало причиной существования данной программы.",
+            fontSize = 16.sp,
+            fontFamily = MaterialTheme.typography.body1.fontFamily,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colors.primary,
+            modifier = Modifier
+                .padding(16.dp, 0.dp, 16.dp, 16.dp)
+                .fillMaxWidth()
         )
-
-        TextButton(onClick = {
-            navController.navigate("account", )
-        },
-            modifier = Modifier
-                .padding(16.dp, 0.dp, 16.dp, 32.dp)
-                .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
-                .fillMaxWidth()
-                .height(42.dp)
+        Row(modifier = Modifier
+            .padding(16.dp, 16.dp, 16.dp, 16.dp)
+            .fillMaxWidth()
         ) {
             Text(
-                text = "Аккаунт",
-                fontSize = 14.sp,
+                text = "Разработчики",
+                fontSize = 32.sp,
                 fontFamily = MaterialTheme.typography.body1.fontFamily,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primary,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.fillMaxWidth()
-            )
+
+                )
         }
-
-        TextButton(onClick = {
-            navController.navigate("myTimeTable")
-        },
-            modifier = Modifier
-                .padding(16.dp, 0.dp, 16.dp, 32.dp)
-                .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
-                .fillMaxWidth()
-                .height(42.dp)
+        Row(modifier = Modifier
+            .padding(16.dp, 16.dp, 16.dp, 16.dp)
+            .fillMaxWidth()
         ) {
-            Text(
-                text = "Мои расписания",
-                fontSize = 14.sp,
-                fontFamily = MaterialTheme.typography.body1.fontFamily,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colors.primary,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Image(
+                painter = painterResource(id = R.drawable.rust),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 16.dp, 0.dp)
+                    .height(68.dp)
+                    .width(68.dp)
+                    .clip(CircleShape))
+            Column (modifier = Modifier
+                .fillMaxWidth())
+            {
+                Text(
+                    text = "Хахук Рустам",
+                    fontSize = 20.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    )
+                Text(
+                    text = "zed.null@icloud.com",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    )
+                Text(
+                    text = "Разработка клиента на IOS,",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSecondary,
+                    )
+                Text(
+                    text = "Разработка клиента на Android,",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSecondary,
+                )
+                Text(
+                    text = "Дизайн приложения",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSecondary,
+                )
+            }
         }
-
-        TextButton(onClick = {
-
-        },
-            modifier = Modifier
-                .padding(16.dp, 0.dp, 16.dp, 32.dp)
-                .background(MaterialTheme.colors.onPrimary, MaterialTheme.shapes.medium)
-                .fillMaxWidth()
-                .height(42.dp)
-
+        Row(modifier = Modifier
+            .padding(16.dp, 16.dp, 16.dp, 16.dp)
+            .fillMaxWidth()
         ) {
-            Text(
-                text = "О приложении",
-                fontSize = 14.sp,
-                fontFamily = MaterialTheme.typography.body1.fontFamily,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colors.primary,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.fillMaxWidth()
+            Image(
+                painter = painterResource(id = R.drawable.ya),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 16.dp, 0.dp)
+                    .height(68.dp)
+                    .width(68.dp)
+                    .verticalScroll(ScrollState(0), true, null, false)
             )
+            Column (modifier = Modifier
+                .fillMaxWidth())
+            {
+                Text(
+                    text = "Гиренко Даниил",
+                    fontSize = 20.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                )
+                Text(
+                    text = "iamgirya@yandex.ru",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                )
+                Text(
+                    text = "Разработка клиента на Android,",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSecondary,
+                )
+                Text(
+                    text = "Разработка сервера",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSecondary,
+                )
+            }
+        }
+        Row(modifier = Modifier
+            .padding(16.dp, 16.dp, 16.dp, 16.dp)
+            .fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.serg),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 16.dp, 0.dp)
+                    .height(68.dp)
+                    .width(68.dp).clip(CircleShape)
+            )
+            Column (modifier = Modifier
+                .fillMaxWidth())
+            {
+                Text(
+                    text = "Прозоров Серёга",
+                    fontSize = 20.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                )
+                Text(
+                    text = "maks.prozorov1@yandex.ru",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                )
+                Text(
+                    text = "Разработка сервера",
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onSecondary,
+                )
+            }
         }
     }
 }

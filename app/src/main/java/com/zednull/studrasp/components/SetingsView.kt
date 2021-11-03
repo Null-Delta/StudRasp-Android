@@ -110,7 +110,7 @@ fun SettingsView(navController: NavController) {
         }
 
         TextButton(onClick = {
-
+            navController.navigate("about")
         },
             modifier = Modifier
                 .padding(16.dp, 0.dp, 16.dp, 32.dp)
@@ -207,7 +207,9 @@ fun SettingsNavigation(
         composable("time_settings") {
             TimeSettingsView(navController, tables)
         }
-        
+        composable("about") {
+            AboutView(navController)
+        }
     }
 }
 

@@ -57,16 +57,7 @@ fun SettingsView(navController: NavController) {
             fontFamily = MaterialTheme.typography.body1.fontFamily,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.primary,
-
-        )
-
-        Text(
-            text = "v1.0 (beta)",
-            fontSize = 16.sp,
-            fontFamily = MaterialTheme.typography.body1.fontFamily,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colors.onSecondary,
-            modifier = Modifier.padding(0.dp,0.dp,0.dp,32.dp)
+            modifier = Modifier.padding(0.dp,0.dp,0.dp,16.dp)
         )
 
         TextButton(onClick = {

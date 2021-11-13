@@ -200,17 +200,8 @@ fun AboutView(navController: NavController) {
                 .fillMaxWidth())
             {
                 Text(
-                    text = "Прозоров Серёга",
+                    text = "Прозоров Максим",
                     fontSize = 20.sp,
-                    fontFamily = MaterialTheme.typography.body1.fontFamily,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier
-                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
-                )
-                Text(
-                    text = "maks.prozorov1@yandex.ru",
-                    fontSize = 16.sp,
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.primary,

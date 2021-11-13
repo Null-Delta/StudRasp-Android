@@ -78,7 +78,10 @@ fun TimeTableView(
                     val request: requestStruct = Gson().fromJson(result.get(),
                         requestStruct::class.java)
                     if(request.error.code == 0) {
+                        request.timetable!!.json!!.invite_code = timeTable.value.invite_code!!
+
                         timeTable.value = request.timetable!!.json!!
+                        timeTable.value.invite_code = request.timetable!!.json!!.invite_code
                         timeTable.value.TableID = request.timetable!!.id
                         context.getSharedPreferences("preferences", Context.MODE_PRIVATE)
                         val editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()

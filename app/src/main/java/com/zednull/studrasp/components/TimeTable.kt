@@ -133,7 +133,6 @@ fun TimeTable(
     ) { result ->
         if (result != null && result.data != null) {
             activeTable.value.days[pagerState.currentPage].changeLessons(date, selectedWeek.value) {
-                Log.i("test", "changed")
 
                 it.removeAll { l ->
                     l.lessonNumber == selectedLesson.value

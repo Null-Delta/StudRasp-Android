@@ -1,7 +1,6 @@
 package com.zednull.studrasp.components
 
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
@@ -21,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,8 +36,8 @@ import com.zednull.studrasp.structure.TimeTableStructure
 import com.zednull.studrasp.structure.emptyTimeTable
 import com.zednull.studrasp.ui.theme.TimeTableTheme
 import kotlinx.coroutines.InternalCoroutinesApi
-import java.io.*
-import java.net.URI
+import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 
@@ -240,6 +238,10 @@ fun Navigation(
     }
 }
 
+object Global {
+    var isInEditor = false
+}
+
 @Composable
 fun bottomBar(
     navController: NavController,
@@ -259,7 +261,7 @@ fun bottomBar(
                 alwaysShowLabel = false,
                 selected = menu.value == 0,
                 onClick = {
-                    if(menu.value != 0) {
+                    if(menu.value != 0 && !Global.isInEditor) {
                         menu.value = 0
                         navController.navigate("home") {
                             navController.enableOnBackPressed(false)

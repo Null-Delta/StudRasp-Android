@@ -142,7 +142,6 @@ fun DrawVariant(
         modifier = Modifier
             .padding(16.dp, 0.dp, 16.dp, 9.dp)
             .fillMaxWidth()
-            .height(36.dp)
             .background(
                 MaterialTheme.colors.secondary,
                 MaterialTheme.shapes.medium
@@ -166,45 +165,48 @@ fun DrawVariant(
             }
     )
     {
-
-        Box(
-            contentAlignment = Alignment.CenterStart,
-            modifier = Modifier.height(36.dp).padding(8.dp,0.dp,8.dp,0.dp)
-        ) {
-            Text(
-                text = namePart,
-                fontSize = 16.sp,
-                fontFamily = MaterialTheme.typography.body1.fontFamily,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colors.primary,
-                textAlign = TextAlign.Left
-            )
+        Column(modifier = Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp).fillMaxWidth().weight(1f, true))
+        {
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 0.dp)
+            ) {
+                Text(
+                    text = namePart,
+                    fontSize = 16.sp,
+                    fontFamily = MaterialTheme.typography.body1.fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colors.primary,
+                    textAlign = TextAlign.Left
+                )
+            }
         }
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f, true)
-        )
-
-        IconButton(
-            onClick = {
-                if (loadTable.value == namePart)
-                    loadTable.value = ""
-                arrayOfParts.value = arrayOfParts.value.filter { it != namePart }.toMutableList()
-                var editor: SharedPreferences.Editor = context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
-                editor.putString("partsNum" + typeOfPart.toString(), Gson().toJson(arrayOfParts.value))
-                editor.apply()
-            },
-            modifier = Modifier
-                .height(36.dp)
-                .width(36.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_delete_24),
-                contentDescription = null,
-                tint = MaterialTheme.colors.primary
-            )
+        Column(modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 0.dp))
+        {
+            IconButton(
+                onClick = {
+                    if (loadTable.value == namePart)
+                        loadTable.value = ""
+                    arrayOfParts.value =
+                        arrayOfParts.value.filter { it != namePart }.toMutableList()
+                    var editor: SharedPreferences.Editor =
+                        context.getSharedPreferences("preferences", Context.MODE_PRIVATE).edit()
+                    editor.putString(
+                        "partsNum" + typeOfPart.toString(),
+                        Gson().toJson(arrayOfParts.value)
+                    )
+                    editor.apply()
+                },
+                modifier = Modifier
+                    .height(36.dp)
+                    .width(36.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_delete_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+            }
         }
     }
 }
@@ -344,5 +346,64 @@ fun previewLoadListOfPartsView() {
         val nameDisp = remember { mutableStateOf("") }
         val navController = rememberNavController()
         LoadListOfPartsView(navigation = navController, loadTable = nameDisp, typeOfPart = 1)
+        val isPressed = remember { mutableStateOf(false) }
+        Row (
+            modifier = Modifier
+                .padding(16.dp, 0.dp, 16.dp, 9.dp)
+                .fillMaxWidth()
+                .background(
+                    MaterialTheme.colors.secondary,
+                    MaterialTheme.shapes.medium
+                )
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            val pressStartTime = System.currentTimeMillis()
+                            isPressed.value = true
+                            this.tryAwaitRelease()
+                            val pressEndTime = System.currentTimeMillis()
+                            val totalPressTime = pressEndTime - pressStartTime
+                            if (totalPressTime < 200) {
+                            }
+                            isPressed.value = false
+                        },
+                    )
+                }
+        )
+        {
+            Column(modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 0.dp).fillMaxWidth().weight(1f, true))
+            {
+                Box(
+                    contentAlignment = Alignment.CenterStart,
+                    modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 0.dp)
+                ) {
+                    Text(
+                        text = "namePart",
+                        fontSize = 16.sp,
+                        fontFamily = MaterialTheme.typography.body1.fontFamily,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primary,
+                        textAlign = TextAlign.Left
+                    )
+                }
+            }
+            Column(modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 0.dp))
+            {
+                IconButton(
+                    onClick = {
+
+                    },
+                    modifier = Modifier
+                        .height(36.dp)
+                        .width(36.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_delete_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.primary
+                    )
+                }
+            }
+        }
     }
 }

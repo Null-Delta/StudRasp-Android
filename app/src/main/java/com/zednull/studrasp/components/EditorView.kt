@@ -45,7 +45,7 @@ fun EditorView(
     tables: MutableState<SavedTables>,
     paddingValues: PaddingValues,
     mainTable: MutableState<TimeTableStructure>) {
-    
+
     val selectedTable = remember { mutableStateOf(tables.value.selectedTable()) }
     val selectedDay = rememberPagerState(pageCount = 7,0,0f,7,false)
     val date = Date()
@@ -125,6 +125,7 @@ fun EditorView(
                                     editor.apply()
                                 }
                             }
+                            Global.isInEditor = false;
                             navigation.popBackStack()
                         },
                         modifier = Modifier
@@ -132,7 +133,7 @@ fun EditorView(
                             .width(36.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_round_close_24),
+                            painter = painterResource(id = R.drawable.ic_checkmark_icon_125020),
                             contentDescription = null,
                             tint = MaterialTheme.colors.primary
                         )

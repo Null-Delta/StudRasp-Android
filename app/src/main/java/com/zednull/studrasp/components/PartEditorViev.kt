@@ -50,19 +50,21 @@ fun PartEditorView(
                 .padding(16.dp, 16.dp, 16.dp, 8.dp)
                 .fillMaxWidth()
         ) {
+            var isReady = dist.value != "" && prep.value != "" && room.value != "" && typ.value != "";
             TextButton(
                 onClick = {
-                    loadTable.value = "close"
+                        loadTable.value = "close"
                 },
             ) {
                 Text(
-                    text = "Отмена",
+                    text = "Отмена" ,
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 20.sp,
                     color = MaterialTheme.colors.primary
                 )
             }
+
 
             Spacer(
                 modifier = Modifier
@@ -74,14 +76,14 @@ fun PartEditorView(
                 onClick = {
                     loadTable.value = "add"
                 },
-                enabled = (dist.value != "" && prep.value != "" && room.value != "" && typ.value != "")
+                enabled = (isReady)
             ) {
                 Text(
                     text = "Добавить",
                     fontFamily = MaterialTheme.typography.body1.fontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 20.sp,
-                    color = if (dist.value != "" && prep.value != "" && room.value != "" && typ.value != "") MaterialTheme.colors.primary
+                    color = if (isReady) MaterialTheme.colors.primary
                 else MaterialTheme.colors.secondary
                 )
             }

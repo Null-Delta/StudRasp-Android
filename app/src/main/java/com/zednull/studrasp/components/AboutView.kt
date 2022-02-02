@@ -145,7 +145,7 @@ fun AboutView(navController: NavController) {
                     .padding(0.dp, 0.dp, 16.dp, 0.dp)
                     .height(68.dp)
                     .width(68.dp)
-                    .verticalScroll(ScrollState(0), true, null, false)
+                    .clip(CircleShape)
             )
             Column (modifier = Modifier
                 .fillMaxWidth())

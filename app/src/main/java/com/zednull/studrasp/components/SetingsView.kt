@@ -178,27 +178,35 @@ fun SettingsNavigation(
     modifier = Modifier.padding(paddingValues)
     ) {
         composable("settings") {
+            Global.isInEditor = false
             SettingsView(navController)
         }
         composable("account") {
+            Global.isInEditor = false
             AccountView(navController, user)
         }
         composable("myTimeTable") {
+            Global.isInEditor = false
             MyTimeTableView(navController, user, tables, code, localTable, shareTable)
         }
         composable("emailAdd") {
+            Global.isInEditor = false
             EmailAddView(navController, user)
         }
         composable("editor") {
+            Global.isInEditor = true
             EditorView(navController, tables, paddingValues, selectedTable)
         }
         composable("editor_settings") {
+            Global.isInEditor = true
             TImeTableSettingsView(tables, navController)
         }
         composable("time_settings") {
+            Global.isInEditor = false
             TimeSettingsView(navController, tables)
         }
         composable("about") {
+            Global.isInEditor = false
             AboutView(navController)
         }
     }
